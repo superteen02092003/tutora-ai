@@ -1,4 +1,19 @@
-name: Deploy to Cloud Run
+name: Deploy to VPS
+
+# tutora-ai chạy trên VPS (cùng máy với backend), sau nginx tại https://rag.tutora.vn.
+# Cloud Run dừng từ 2026-11 (project GCP tutora-ai hết billing).
+#
+# Image build trên runner rồi đẩy thẳng sang VPS qua SSH (docker save | docker load):
+# không cần registry, VPS không cần quyền GitHub. Trên VPS:
+#   - .env ở /opt/tutora-ai/.env (chmod 600, không nằm trong git);
+#   - container "tutora-ai" chỉ nghe 127.0.0.1:8000, tối đa 512 MB RAM;
+#   - /health không lên trong 60 giây → chạy lại image trước đó (tutora-ai:previous).
+#
+# Secrets cần có (Settings → Secrets and variables → Actions):
+#   VPS_HOST         IP VPS
+#   VPS_USER         user SSH (root)
+#   VPS_SSH_KEY      private key riêng cho deploy (không dùng key cá nhân)
+#   VPS_KNOWN_HOSTS  dòng known_hosts của VPS (ssh-keyscan -t ed25519 <IP>), chống giả mạo máy chủ
 
 on:
   push:
@@ -10,52 +25,101 @@ on:
       - '.github/workflows/deploy.yml'
   workflow_dispatch: {}
 
-env:
-  PROJECT_ID: tutora-ai
-  REGION: asia-southeast1
-  SERVICE: tutora-ai
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: false
 
 permissions:
   contents: read
-  id-token: write
 
 jobs:
   deploy:
-    name: Build & Deploy to Cloud Run
+    name: Build & deploy to VPS
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      IMAGE: tutora-ai:${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
 
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          project_id: ${{ env.PROJECT_ID }}
-          workload_identity_provider: projects/297280227892/locations/global/workloadIdentityPools/github-pool/providers/github-provider
-          service_account: github-deployer@tutora-ai.iam.gserviceaccount.com
+      - name: Build image
+        run: docker build -t "$IMAGE" .
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
-      - name: Deploy to Cloud Run (build from source)
-        run: |
-          gcloud run deploy "$SERVICE" \
-            --source . \
-            --project "$PROJECT_ID" \
-            --region "$REGION" \
-            --quiet
+      - name: Set up SSH
         env:
-          SERVICE: ${{ env.SERVICE }}
-          PROJECT_ID: ${{ env.PROJECT_ID }}
-          REGION: ${{ env.REGION }}
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          printf 'Host vps\n  HostName %s\n  User %s\n  IdentityFile ~/.ssh/deploy_key\n  StrictHostKeyChecking yes\n  ServerAliveInterval 30\n' \
+            "${{ secrets.VPS_HOST }}" "${{ secrets.VPS_USER }}" > ~/.ssh/config
 
-      - name: Deployment summary
+      - name: Send image to VPS
+        run: docker save "$IMAGE" | gzip -1 | ssh vps 'gunzip | docker load'
+
+      - name: Swap container (rollback on failed health check)
+        run: |
+          ssh vps IMAGE="$IMAGE" bash -s <<'EOF'
+          set -euo pipefail
+          DIR=/opt/tutora-ai
+          test -f "$DIR/.env" || { echo "::error::$DIR/.env missing on VPS"; exit 1; }
+
+          run() {
+            docker rm -f tutora-ai >/dev/null 2>&1 || true
+            docker run -d --name tutora-ai --restart always --env-file "$DIR/.env" \
+              -p 127.0.0.1:8000:8000 --memory 512m --memory-swap 768m "$1" >/dev/null
+          }
+          healthy() {
+            for _ in $(seq 1 30); do
+              [ "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/health || true)" = 200 ] && return 0
+              sleep 2
+            done
+            return 1
+          }
+
+          # Giữ image đang chạy làm bản dự phòng.
+          if docker image inspect tutora-ai:current >/dev/null 2>&1; then
+            docker tag tutora-ai:current tutora-ai:previous
+          fi
+
+          run "$IMAGE"
+          if healthy; then
+            docker tag "$IMAGE" tutora-ai:current
+            echo "deployed $IMAGE"
+            docker stats --no-stream --format 'RAM {{.MemUsage}}' tutora-ai
+          else
+            echo "::error::health check failed, rolling back"
+            docker logs --tail 50 tutora-ai || true
+            if docker image inspect tutora-ai:previous >/dev/null 2>&1; then
+              run tutora-ai:previous
+              healthy && echo "rolled back to previous image" || echo "::error::rollback also unhealthy"
+            fi
+            exit 1
+          fi
+
+          # Dọn image cũ: giữ current, previous và 3 bản theo commit gần nhất.
+          docker images tutora-ai --format '{{.Tag}} {{.CreatedAt}}' \
+            | grep -v -E '^(current|previous) ' | sort -k2 -r | tail -n +4 | cut -d' ' -f1 \
+            | xargs -r -I{} docker rmi "tutora-ai:{}" >/dev/null 2>&1 || true
+          EOF
+
+      - name: Check from outside
+        run: |
+          for _ in 1 2 3 4 5; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://rag.tutora.vn/health || true)
+            [ "$code" = 200 ] && { echo "https://rag.tutora.vn/health -> 200"; exit 0; }
+            sleep 5
+          done
+          echo "::error::https://rag.tutora.vn/health -> $code"; exit 1
+
+      - name: Summary
         if: always()
         run: |
-          echo "### Deploy tutora-ai to Cloud Run 🚀" >> $GITHUB_STEP_SUMMARY
-          echo "- **Service**: $SERVICE ($REGION)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
-          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
-        env:
-          SERVICE: ${{ env.SERVICE }}
-          REGION: ${{ env.REGION }}
+          {
+            echo "### Deploy tutora-ai to VPS"
+            echo "- **Commit**: \`${{ github.sha }}\`"
+            echo "- **Status**: ${{ job.status }}"
+          } >> "$GITHUB_STEP_SUMMARY"
