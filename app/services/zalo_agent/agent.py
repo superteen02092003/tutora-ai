@@ -27,45 +27,50 @@ import re
 import httpx
 from google import genai
 from google.genai import types
-from google.genai import errors as genai_errors
 
+from types import SimpleNamespace
+
+from ...core import llm
 from ...core.config import get_settings
-from ...core.dependencies import get_gemini_client
 from ...models.schemas import (
     AgentRequest, AgentResponse, AgentContextPatch, TutorChatFilters,
     TutorChatContext, DirectSearchRequest, DirectSearchResponse,
 )
 from ..tutoring_shared.candidates import _fetch_candidates, _get_subjects, _normalize_city
 from ..knowledge.retrieve import retrieve_kb
-from ..telemetry.usage import track
 
 _settings = get_settings()
 
-# gemini-2.5-flash: ổn định hơn hẳn lite ở trích JSON + hiểu ngữ cảnh tiếng Việt.
-# Luồng sale đáng tiền — bớt bịa/hỏi lại hơn nhiều so với flash-lite.
-_MODEL = "gemini-2.5-flash"
 # PHẢI khớp MAX_CARDS bên NestJS (agent.handler) — số card gia sư thực render trên Zalo.
 # 3 = top 3 chia 3 tier Standard/Pro/Premium theo user flow chính thức (agents/agentscenarios.md KB-A).
 _MAX_CARDS_SHOWN = 3
 
-# Retry lỗi TẠM THỜI của Gemini (503 quá tải / 429 / timeout). Backoff tăng dần.
+# Retry lỗi TẠM THỜI (429 / 5xx). Backoff tăng dần.
 _RETRY_DELAYS = [0.8, 2.0]
-_RETRYABLE = (genai_errors.ServerError, genai_errors.APIError)
 
 
 async def _generate(contents, config):
-    """generate_content (sync) trong thread + retry lỗi tạm thời của Gemini."""
-    gemini = get_gemini_client()
+    """Một lượt model (OpenAI, xem core/llm.py) + retry lỗi tạm thời (429 / 5xx).
+
+    Vẫn nhận contents/config dạng google-genai (types.Content, GenerateContentConfig) để
+    giữ nguyên phần dựng hội thoại bên dưới; đổi sang messages OpenAI tại đây.
+    Trả object có .text như response Gemini cũ."""
+    system = getattr(config, "system_instruction", None)
+    json_mode = getattr(config, "response_mime_type", None) == "application/json"
+    history = [
+        {"role": getattr(c, "role", "user") or "user",
+         "content": "".join(getattr(p, "text", None) or "" for p in (getattr(c, "parts", None) or []))}
+        for c in contents
+    ]
     last_exc = None
     for attempt in range(len(_RETRY_DELAYS) + 1):
         try:
-            with track("zalo_agent", _MODEL) as _t:
-                return _t.done(await asyncio.to_thread(
-                    gemini.models.generate_content, model=_MODEL,
-                    contents=contents, config=config,
-                ))
-        except _RETRYABLE as e:
-            code = getattr(e, "code", None)
+            out = await llm.acomplete("zalo_agent", None, system=system, history=history, json=json_mode)
+            text = out if isinstance(out, str) else json.dumps(out, ensure_ascii=False)
+            return SimpleNamespace(text=text)
+        except llm.LLMError as e:
+            m = re.search(r"HTTP (\d{3})", str(e))
+            code = int(m.group(1)) if m else None
             if code is not None and code < 500 and code != 429:
                 raise
             last_exc = e

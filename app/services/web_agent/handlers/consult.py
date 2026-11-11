@@ -10,14 +10,12 @@ Câu hỏi do LLM diễn đạt để tự nhiên và đổi theo ngữ cảnh, 
 """
 from __future__ import annotations
 
-from google.genai import types
 
 from ..schemas import WebChatResponse
 from ..handlers.base import BaseHandler, HandlerContext
-from ....core.dependencies import get_gemini_client
-from ...telemetry.usage import track
+from ....core import llm
+from ....core.config import get_settings
 
-_MODEL = "gemini-2.5-flash-lite"
 
 ASKED_MARK = "\u200b"
 
@@ -52,15 +50,8 @@ def _ask_more(ctx: HandlerContext) -> str:
         "- KHÔNG chào lại, KHÔNG nhắc tên gia sư. Chỉ trả về câu đó."
     )
     try:
-        with track("web_agent_consult", _MODEL) as _t:
-            resp = _t.done(get_gemini_client().models.generate_content(
-                model=_MODEL, contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.7,   # cần đa dạng, không lặp y hệt mỗi lượt
-                    thinking_config=types.ThinkingConfig(thinking_budget=0),
-                ),
-            ))
-        return (resp.text or "").strip().strip('"')
+        text = llm.complete("web_agent_consult", prompt, effort="none", model=get_settings().assistant_model)
+        return (text or "").strip().strip('"')
     except Exception as e:
         print(f"web consult ask-more error: {e}")
         return ""

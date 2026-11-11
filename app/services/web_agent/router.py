@@ -19,14 +19,9 @@ import json
 import re
 import unicodedata
 
-from google import genai
-from google.genai import types
-
-from ...core.dependencies import get_gemini_client
+from ...core import llm
+from ...core.config import get_settings
 from ...models.schemas import TutorChatFilters
-from ..telemetry.usage import track
-
-_MODEL = "gemini-2.5-flash-lite"
 
 
 _ROUTER_PROMPT = """Bạn là bộ ĐỊNH TUYẾN cho trợ lý AI của Tutora — nền tảng kết nối phụ
@@ -154,8 +149,7 @@ async def route(
 ) -> dict:
     """1 call → {scope, intent, reply, suggestions, filters}. Fallback an toàn nếu lỗi:
     coi như on_topic/tutor để không chặn nhầm nhu cầu thật."""
-    gemini: genai.Client = get_gemini_client()
-    convo = "\n".join(f'{m["role"]}: {m["content"]}' for m in history) or "(chưa có)"
+    convo ="\n".join(f'{m["role"]}: {m["content"]}' for m in history) or "(chưa có)"
     subjects_text = "\n".join(
         f'- {s["subjectName"]}: id={s["subjectId"]}' for s in subjects
     ) or "(không có)"
@@ -176,17 +170,7 @@ async def route(
         + f"\n\nTin nhắn mới: {message or '(chưa có, mới bắt đầu)'}"
     )
     try:
-        with track("web_agent_router", _MODEL) as _t:
-            resp = _t.done(gemini.models.generate_content(
-                model=_MODEL,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.1,
-                    response_mime_type="application/json",
-                    thinking_config=types.ThinkingConfig(thinking_budget=0),
-                ),
-            ))
-        data = json.loads(resp.text)
+        data = llm.complete("web_agent_router", prompt, json=True, effort="none", model=get_settings().assistant_model)
     except Exception as e:
         print(f"web router error: {e}")
         # Fallback an toàn: chitchat (dẫn dắt hỏi nhu cầu), KHÔNG tutor — tránh gọi .NET

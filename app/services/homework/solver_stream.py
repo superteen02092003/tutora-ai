@@ -3,7 +3,6 @@ import re
 import time
 from typing import Optional, List, AsyncGenerator
 from google import genai
-from google.genai import types
 from ...utils.prompt import (
     TUTOR_SYSTEM_V2,
     CHAT_SYSTEM,
@@ -17,6 +16,7 @@ from ...utils.prompt import (
 from .step_segmenter import segment_steps
 from ..telemetry import usage as usage_telemetry
 from ...core.config import get_settings
+from ...core import llm
 
 _settings = get_settings()
 
@@ -256,11 +256,6 @@ async def solve_stream(
     response_format="steps": vẫn stream delta markdown như cũ (client cũ không gãy),
     nhưng kèm thêm "steps" đã tách cấu trúc để canvas web render — xem step_segmenter.
     """
-    history_contents = []
-    for msg in (history or []):
-        role = "user" if msg["role"] == "user" else "model"
-        history_contents.append(types.Content(role=role, parts=[types.Part(text=msg["content"])]))
-
     want_steps = response_format == "steps" and is_problem
 
     if is_problem:
@@ -276,30 +271,22 @@ async def solve_stream(
         current_prompt = f"{prof_block}\n\n[HỌC SINH HỎI]\n{question}" if prof_block else question
         system = CHAT_SYSTEM
 
-    solve_contents = history_contents + [
-        types.Content(role="user", parts=[types.Part(text=current_prompt)])
-    ]
+    # OpenAI (gpt-6-luna): history "model" → "assistant" do llm.build_messages lo.
+    solve_messages = llm.build_messages(current_prompt, system=system, history=history)
 
     loop = asyncio.get_event_loop()
 
-    def _run_stream(contents, cfg, queue: asyncio.Queue, model: str = _SOLVE_MODEL,
+    def _run_stream(messages, effort, queue: asyncio.Queue, model: str = _SOLVE_MODEL,
                     feature: str = "solve"):
-        """Chạy 1 lời gọi stream trong thread, đẩy (kind, text) vào queue, kết bằng None."""
+        """Chạy 1 lời gọi stream trong thread, đẩy ("delta", text) vào queue, kết bằng None."""
         def _worker():
             started = time.monotonic()
-            # Stream chỉ đính usage_metadata ở CHUNK CUỐI -> giữ chunk gần nhất có
-            # metadata, bóc sau khi hết vòng lặp.
-            last_meta_chunk = None
+            # Usage chỉ có ở chunk cuối (stream_options.include_usage).
+            usage_sink: list = []
             error: Exception | None = None
             try:
-                for chunk in client.models.generate_content_stream(
-                    model=model, contents=contents, config=cfg
-                ):
-                    if getattr(chunk, "usage_metadata", None) is not None:
-                        last_meta_chunk = chunk
-                    for kind, text in _iter_parts(chunk):
-                        if kind:
-                            loop.call_soon_threadsafe(queue.put_nowait, (kind, text))
+                for piece in llm.stream_text(messages, effort=effort, model=model, usage_sink=usage_sink):
+                    loop.call_soon_threadsafe(queue.put_nowait, ("delta", piece))
             except Exception as exc:
                 error = exc
                 raise
@@ -310,8 +297,8 @@ async def solve_stream(
                         feature=feature, model=model, success=False,
                         error=f"{type(error).__name__}: {error}"[:500],
                     )
-                elif last_meta_chunk is not None:
-                    rec = usage_telemetry.extract_usage(last_meta_chunk, feature, model)
+                elif usage_sink:
+                    rec = usage_telemetry.extract_usage(llm.usage_response(usage_sink[-1]), feature, model)
                 else:
                     rec = usage_telemetry.UsageRecord(feature=feature, model=model)
                 rec.latency_ms = int((time.monotonic() - started) * 1000)
@@ -330,17 +317,12 @@ async def solve_stream(
     # PHA 1: sinh RIÊNG phần suy nghĩ (chỉ khi giải toán)
     if is_problem:
         think_q: asyncio.Queue = asyncio.Queue()
-        think_cfg = types.GenerateContentConfig(
-            temperature=0.5,
-            system_instruction=THINKING_SYSTEM,
-            thinking_config=types.ThinkingConfig(thinking_budget=0),
-        )
         think_prompt = f"[BÀI TOÁN]\n{question}"
         think_future = _run_stream(
-            [types.Content(role="user", parts=[types.Part(text=think_prompt)])],
-            think_cfg,
+            llm.build_messages(think_prompt, system=THINKING_SYSTEM),
+            "none",  # khối "Đang suy nghĩ" hiển thị cho học sinh: cần nhanh, không suy luận ẩn
             think_q,
-            model=_THINK_MODEL,  # thinking dùng flash-lite (rẻ, không cần verify)
+            model=_THINK_MODEL,
             feature="solve_thinking",
         )
         while True:
@@ -354,17 +336,9 @@ async def solve_stream(
 
     # PHA 2: lời giải chính (bật code execution cho bài toán)
     solve_q: asyncio.Queue = asyncio.Queue()
-    solve_cfg = types.GenerateContentConfig(
-        temperature=0.5,
-        top_p=1,
-        system_instruction=system,
-        # Bật thinking cho lời giải chính — tắt (budget=0)
-        thinking_config=types.ThinkingConfig(thinking_budget=-1),
-        # Code execution né lỗi MALFORMED_RESPONSE ở bài số thập phân/LaTeX nặng; không
-        # stream code ra client (đã bỏ hiển thị verify) — xem xử lý kind code bên dưới.
-        tools=[types.Tool(code_execution=types.ToolCodeExecution())] if is_problem else None,
-    )
-    solve_future = _run_stream(solve_contents, solve_cfg, solve_q)
+    # Lời giải chính: mức suy luận mặc định của model. Không còn code execution của Gemini
+    # -> verified giữ None (UI không hiện nhãn); nhãn kiểm chứng từ ngân hàng câu hỏi vẫn giữ.
+    solve_future = _run_stream(solve_messages, None, solve_q)
 
     canvas_splitter = _CanvasSplitter() if want_steps else None
     canvas_accumulated = ""

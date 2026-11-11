@@ -18,8 +18,13 @@ class Settings(BaseSettings):
     rag_top_k: int = 3
     rag_embedding_dim: int = 768
     env: str = "development"
-    solve_model: str = "gemini-3.6-flash"
-    solve_thinking_model: str = "gemini-2.5-flash-lite"
+    # Sinh chữ đi qua OpenAI (app/core/llm.py) từ 2026-11-11; Gemini chỉ còn cho embedding.
+    openai_api_key: str = ""
+    llm_model: str = "gpt-6-luna"
+    # Trợ lý web cần trả lời nhanh: Gemini Flash-Lite ~1 s/lượt, gpt-6-luna ~4 s (đo 2026-11-11).
+    assistant_model: str = "gemini-3.5-flash-lite"
+    solve_model: str = "gpt-6-luna"
+    solve_thinking_model: str = "gpt-6-luna"
     dotnet_be_url: str = "http://localhost:5166"
 
     @field_validator("dotnet_be_url")

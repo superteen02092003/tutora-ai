@@ -11,15 +11,13 @@ import json
 import re
 import unicodedata
 
-from google.genai import types
 
 from ..schemas import WebChatResponse, TutorCard
 from ..handlers.base import BaseHandler, HandlerContext
 from ...tutoring_shared.candidates import _fetch_candidates, _get_subjects, _get_grades
-from ....core.dependencies import get_gemini_client
-from ...telemetry.usage import track
+from ....core import llm
+from ....core.config import get_settings
 
-_MODEL = "gemini-2.5-flash-lite"
 
 _PROFILE_PATH = "/tutor-detail/{tutor_id}"
 
@@ -94,15 +92,8 @@ def _follow_up_question(ctx, current_reply: str) -> str:
         "- Chỉ trả về câu đó, không giải thích."
     )
     try:
-        with track("web_agent_tutor", _MODEL) as _t:
-            resp = _t.done(get_gemini_client().models.generate_content(
-                model=_MODEL, contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.7,   # cao hơn các call khác: cần đa dạng, không lặp mỗi lượt
-                    thinking_config=types.ThinkingConfig(thinking_budget=0),
-                ),
-            ))
-        return (resp.text or "").strip().strip('"')
+        text = llm.complete("web_agent_tutor", prompt, effort="none", model=get_settings().assistant_model)
+        return (text or "").strip().strip('"')
     except Exception as e:
         print(f"web tutor follow-up error: {e}")
         return ""

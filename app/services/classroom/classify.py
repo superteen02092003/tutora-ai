@@ -3,12 +3,11 @@
 """
 from __future__ import annotations
 
-import asyncio
+from ...core import llm
+
 import json
 
-from google.genai import types
 
-MODEL = "gemini-2.5-flash"
 
 # Chỉ cần vài nghìn ký tự đầu là đủ nhận ra tài liệu nói về cái gì. Gửi cả file vừa
 # chậm vừa tốn, mà không chính xác hơn.
@@ -63,17 +62,7 @@ async def check_relevance(gemini, full_text: str, subject: str) -> dict:
     )
 
     try:
-        response = await asyncio.to_thread(
-            gemini.models.generate_content,
-            model=MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.0,
-                response_mime_type="application/json",
-                response_schema=_SCHEMA,
-            ),
-        )
-        raw = json.loads(response.text)
+        raw = await llm.acomplete("classroom_check_relevance", prompt, schema=_SCHEMA, effort="none")
     except Exception as e:
         print(f"check_relevance error: {e}")
         return {"relevant": True, "reason": None}

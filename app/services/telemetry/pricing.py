@@ -20,6 +20,8 @@ _PRICES: dict[str, tuple[float, float, float]] = {
     "gemini-2.5-pro": (1.25, 10.00, 0.125),
     "gemini-2.5-flash": (0.30, 2.50, 0.03),
     "gemini-2.5-flash-lite": (0.10, 0.40, 0.01),
+    # OpenAI — sinh chữ từ 2026-11-11. Giá theo trang tổng hợp, CHƯA đối chiếu trang giá OpenAI.
+    "gpt-6-luna": (0.10, 0.50, 0.01),
     # Embedding chỉ có chiều input.
     "gemini-embedding-2": (0.15, 0.0, 0.0),
     "gemini-embedding-001": (0.15, 0.0, 0.0),

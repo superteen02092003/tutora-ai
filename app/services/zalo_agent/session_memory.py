@@ -14,10 +14,11 @@ Chỉ tốn 1 LLM call cho mỗi user THỰC SỰ quay lại (không tóm tắt 
 """
 from __future__ import annotations
 
+from ...core import llm
+
 import json
 
 from google import genai
-from google.genai import types
 
 from ...core.dependencies import get_gemini_client
 from ...models.schemas import (
@@ -25,9 +26,7 @@ from ...models.schemas import (
     SummarizeSessionResponse,
     SessionMemory,
 )
-from ..telemetry.usage import track
 
-_MODEL = "gemini-2.5-flash-lite"
 
 _SUMMARIZE_PROMPT = """Bạn tóm tắt một cuộc hội thoại CŨ giữa phụ huynh và trợ lý tìm gia sư Tutora,
 để lần sau phụ huynh quay lại thì trợ lý nhớ được ngữ cảnh. Đọc hội thoại, trả về JSON DUY NHẤT:
@@ -94,16 +93,7 @@ async def summarize_session(body: SummarizeSessionRequest) -> SummarizeSessionRe
 
 
 async def _generate_json(gemini: genai.Client, prompt: str) -> str:
-    import asyncio
-    with track("zalo_session_memory", _MODEL) as _t:
-        resp = _t.done(await asyncio.to_thread(
-            gemini.models.generate_content,
-            model=_MODEL,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                temperature=0.2,
-                response_mime_type="application/json",
-                thinking_config=types.ThinkingConfig(thinking_budget=0),
-            ),
-        ))
-    return resp.text
+    # Trả text JSON (caller tự parse) — giữ nguyên hợp đồng cũ.
+    import json as _json
+    obj = await llm.acomplete("zalo_session_memory", prompt, json=True, effort="none")
+    return _json.dumps(obj, ensure_ascii=False)

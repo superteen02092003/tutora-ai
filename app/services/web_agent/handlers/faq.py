@@ -9,15 +9,13 @@ Nguồn KB: bảng RIÊNG tutora_kb_chunks
 """
 from __future__ import annotations
 
-from google.genai import types
 
 from ..schemas import WebChatResponse
 from ..handlers.base import BaseHandler, HandlerContext
 from ...knowledge.retrieve import retrieve_kb
-from ....core.dependencies import get_gemini_client
-from ...telemetry.usage import track
+from ....core import llm
+from ....core.config import get_settings
 
-_MODEL = "gemini-2.5-flash-lite"
 
 _NO_INFO = (
     "Dạ phần này mình chưa có thông tin chính xác ạ. Anh/chị liên hệ hỗ trợ Tutora để "
@@ -48,7 +46,6 @@ class FaqHandler(BaseHandler):
 
 def _answer_from_passages(question: str, ctx_text: str, history: list[dict]) -> str:
     """LLM diễn đạt câu trả lời DỰA HOÀN TOÀN vào passage — temp thấp, chống bịa."""
-    gemini = get_gemini_client()
     convo = "\n".join(f'{m["role"]}: {m["content"]}' for m in history[-6:])
     prompt = (
         "Bạn là trợ lý Tutora. Trả lời câu hỏi của người dùng DỰA HOÀN TOÀN vào thông tin "
@@ -62,16 +59,8 @@ def _answer_from_passages(question: str, ctx_text: str, history: list[dict]) -> 
         f"Câu hỏi: {question}"
     )
     try:
-        with track("web_agent_faq", _MODEL) as _t:
-            resp = _t.done(gemini.models.generate_content(
-                model=_MODEL,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.2,
-                    thinking_config=types.ThinkingConfig(thinking_budget=0),
-                ),
-            ))
-        return (resp.text or "").strip()
+        text = llm.complete("web_agent_faq", prompt, effort="none", model=get_settings().assistant_model)
+        return (text or "").strip()
     except Exception as e:
         print(f"web faq answer error: {e}")
         return ""

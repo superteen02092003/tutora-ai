@@ -22,9 +22,8 @@ from google import genai
 from google.genai import types
 
 from ...models.extract import ExtractPdfResponse, ExtractedQuestion
-from ..telemetry.usage import track
+from ...core import llm
 
-MODEL = "gemini-2.5-flash"
 
 _CHAPTERS = (
     "bat_phuong_trinh_bac_nhat_hai_an, can_bac_hai, cap_so_cong, da_thuc, dao_ham, "
@@ -142,22 +141,8 @@ def _crop_rect(page: fitz.Page, rect: fitz.Rect) -> str | None:
 async def extract_pdf(client: genai.Client, pdf_bytes: bytes) -> ExtractPdfResponse:
     import json
     try:
-        with track("homework_extract_pdf", MODEL) as _t:
-            response = _t.done(client.models.generate_content(
-                model=MODEL,
-                contents=[
-                    types.Content(parts=[
-                        types.Part.from_bytes(data=pdf_bytes, mime_type="application/pdf"),
-                        types.Part.from_text(text=_PROMPT),
-                    ])
-                ],
-                config=types.GenerateContentConfig(
-                    temperature=0.0,
-                    response_mime_type="application/json",
-                    response_schema=_SCHEMA,
-                ),
-            ))
-        raw = json.loads(response.text)
+        raw = await llm.acomplete("homework_extract_pdf", _PROMPT,
+                                  files=[(pdf_bytes, "application/pdf")], schema=_SCHEMA)
 
         doc = fitz.open(stream=pdf_bytes, filetype="pdf")
         # Dò sẵn vùng hình thật cho từng trang (1 lần/trang).

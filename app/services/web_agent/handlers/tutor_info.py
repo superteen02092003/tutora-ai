@@ -16,15 +16,13 @@ from __future__ import annotations
 import re
 import unicodedata
 
-from google.genai import types
 
 from ..schemas import WebChatResponse
 from ..handlers.base import BaseHandler, HandlerContext
-from ....core.dependencies import get_gemini_client
-from ...telemetry.usage import track
+from ....core import llm
+from ....core.config import get_settings
 from ...tutoring_shared.tutor_api import get_full_profile, get_schedule
 
-_MODEL = "gemini-2.5-flash-lite"
 
 # "người đầu tiên", "bạn thứ 2"... → index trong danh sách card đã hiện.
 _ORDINALS = [
@@ -339,15 +337,8 @@ def _answer(question: str, facts: str, history: list[dict]) -> str:
         f"Câu hỏi: {question}"
     )
     try:
-        with track("web_agent_tutor_info", _MODEL) as _t:
-            resp = _t.done(get_gemini_client().models.generate_content(
-                model=_MODEL, contents=prompt,
-                config=types.GenerateContentConfig(
-                    temperature=0.2,
-                    thinking_config=types.ThinkingConfig(thinking_budget=0),
-                ),
-            ))
-        return (resp.text or "").strip()
+        text = llm.complete("web_agent_tutor_info", prompt, effort="none", model=get_settings().assistant_model)
+        return (text or "").strip()
     except Exception as e:
         print(f"web tutor_info answer error: {e}")
         return ""

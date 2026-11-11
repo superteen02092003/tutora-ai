@@ -8,9 +8,9 @@ import json
 import logging
 from typing import Any
 
-from google.genai import types
+
 from pydantic import BaseModel, ValidationError
-from ..telemetry.usage import track
+from ...core import llm
 
 from ...models.assessment import (
     AnalysisInput,
@@ -24,7 +24,6 @@ from ...models.assessment import (
 
 logger = logging.getLogger(__name__)
 
-_MODEL = "gemini-2.5-flash"
 
 
 _DIFFICULTY_VI = {
@@ -251,27 +250,11 @@ def _coerce(raw: dict[str, Any], inp: AnalysisInput) -> dict[str, Any]:
 
 
 async def analyze(client, inp: AnalysisInput) -> AnalysisOutput:
-    """Gọi Gemini 1 lượt, trả kết quả đã chuẩn hoá. Lỗi parse -> raise cho router."""
-    cfg = types.GenerateContentConfig(
-        temperature=0.3,
-        system_instruction=SYSTEM,
-        response_mime_type="application/json",
-        # Ràng buộc chính model chỉ sinh được đúng hình dạng + đúng enum
-        response_schema=AnalysisSchema,
-    )
-
-    with track("assessment_analyze", _MODEL) as _t:
-        response = _t.done(await client.aio.models.generate_content(
-            model=_MODEL,
-            contents=build_prompt(inp),
-            config=cfg,
-        ))
-
-    text = _strip_fence(response.text or "")
-    if not text:
+    """Gọi model 1 lượt, trả kết quả đã chuẩn hoá. Lỗi parse -> raise cho router."""
+    # Ràng buộc chính model chỉ sinh được đúng hình dạng + đúng enum (JSON schema từ Pydantic).
+    raw = await llm.acomplete("assessment_analyze", build_prompt(inp), system=SYSTEM, schema=AnalysisSchema)
+    if not raw:
         raise ValueError("Model trả về rỗng")
-
-    raw = json.loads(text)
     if not isinstance(raw, dict):
         raise ValueError("Model không trả JSON object")
 

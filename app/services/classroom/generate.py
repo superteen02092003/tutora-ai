@@ -8,14 +8,12 @@ cho học sinh ôn ngay. Nghĩa là:
 """
 from __future__ import annotations
 
-import asyncio
+from ...core import llm
+
 import json
 import re
 
-from google.genai import types
-from ..telemetry.usage import track
 
-MODEL = "gemini-2.5-flash"
 
 # Trần ký tự cho toàn bộ tài liệu đưa vào prompt. Flash chịu được context lớn hơn
 # nhiều, nhưng tài liệu quá dày thì chất lượng đề loãng và thời gian chờ dài — gia
@@ -215,21 +213,11 @@ async def generate_practice(gemini, materials: list[dict], prompt: str) -> dict:
         return {"title": "", "questions": [], "error": "Tài liệu không có nội dung."}
 
     try:
-        with track("classroom_generate_practice", MODEL) as _t:
-            response = _t.done(await asyncio.to_thread(
-                gemini.models.generate_content,
-                model=MODEL,
-                contents=(
-                    _PROMPT.replace("<<PROMPT>>", prompt.strip()).replace("<<DOCUMENTS>>", documents)
-                ),
-                config=types.GenerateContentConfig(
-                    # Đề ôn tập cần bám sát tài liệu, không cần sáng tạo.
-                    temperature=0.2,
-                    response_mime_type="application/json",
-                    response_schema=_SCHEMA,
-                ),
-            ))
-        raw = json.loads(response.text)
+        raw = await llm.acomplete(
+            "classroom_generate_practice",
+            _PROMPT.replace("<<PROMPT>>", prompt.strip()).replace("<<DOCUMENTS>>", documents),
+            schema=_SCHEMA,
+        )
     except Exception as e:
         print(f"generate_practice error: {e}")
         return {"title": "", "questions": [], "error": "Không sinh được câu hỏi."}
