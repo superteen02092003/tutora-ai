@@ -1,0 +1,595 @@
+{
+ "source": "toptutor-main/01-background/maths-skill-map.md",
+ "generated": "2026-11-11",
+ "nodes": [
+  {
+   "id": "N6.01",
+   "grade": 6,
+   "gateway": false,
+   "name_vi": "Thứ tự thực hiện phép tính với số tự nhiên",
+   "needs": [],
+   "shows_as": "adds before multiplying; ignores brackets"
+  },
+  {
+   "id": "N6.02",
+   "grade": 6,
+   "gateway": true,
+   "name_vi": "Lũy thừa với số mũ tự nhiên; nhân, chia hai lũy thừa cùng cơ số",
+   "needs": [
+    "N6.01"
+   ],
+   "shows_as": "2³ read as 2·3; adds exponents when bases differ"
+  },
+  {
+   "id": "N6.03",
+   "grade": 6,
+   "gateway": false,
+   "name_vi": "Chia hết, dấu hiệu chia hết, số nguyên tố",
+   "needs": [
+    "N6.01"
+   ],
+   "shows_as": "wrong divisibility test"
+  },
+  {
+   "id": "N6.04",
+   "grade": 6,
+   "gateway": false,
+   "name_vi": "Ước chung, bội chung, ƯCLN, BCNN",
+   "needs": [
+    "N6.03"
+   ],
+   "shows_as": "confuses ƯCLN and BCNN"
+  },
+  {
+   "id": "N6.05",
+   "grade": 6,
+   "gateway": false,
+   "name_vi": "Số nguyên: tập hợp, số đối, so sánh",
+   "needs": [],
+   "shows_as": "thinks −5 > −2"
+  },
+  {
+   "id": "N6.06",
+   "grade": 6,
+   "gateway": true,
+   "name_vi": "Cộng, trừ số nguyên (trừ số âm)",
+   "needs": [
+    "N6.05"
+   ],
+   "shows_as": "3 − (−2) = 1"
+  },
+  {
+   "id": "N6.07",
+   "grade": 6,
+   "gateway": true,
+   "name_vi": "Nhân, chia số nguyên (quy tắc dấu)",
+   "needs": [
+    "N6.06"
+   ],
+   "shows_as": "(−2)·(−3) = −6"
+  },
+  {
+   "id": "N6.08",
+   "grade": 6,
+   "gateway": true,
+   "name_vi": "Quy tắc dấu ngoặc với số nguyên",
+   "needs": [
+    "N6.06"
+   ],
+   "shows_as": "−(a − b) written as −a − b"
+  },
+  {
+   "id": "N6.09",
+   "grade": 6,
+   "gateway": false,
+   "name_vi": "Phân số bằng nhau, tính chất cơ bản, rút gọn",
+   "needs": [
+    "N6.04"
+   ],
+   "shows_as": "cancels terms across a sum"
+  },
+  {
+   "id": "N6.10",
+   "grade": 6,
+   "gateway": true,
+   "name_vi": "Quy đồng mẫu, so sánh, cộng trừ phân số",
+   "needs": [
+    "N6.09",
+    "N6.04"
+   ],
+   "shows_as": "adds numerators and denominators"
+  },
+  {
+   "id": "N6.11",
+   "grade": 6,
+   "gateway": false,
+   "name_vi": "Nhân, chia phân số; phân số của một số",
+   "needs": [
+    "N6.09"
+   ],
+   "shows_as": "divides without inverting"
+  },
+  {
+   "id": "N6.12",
+   "grade": 6,
+   "gateway": false,
+   "name_vi": "Số thập phân và các phép tính",
+   "needs": [
+    "N6.10"
+   ],
+   "shows_as": "misplaces the decimal point"
+  },
+  {
+   "id": "N6.13",
+   "grade": 6,
+   "gateway": false,
+   "name_vi": "Tỉ số, tỉ số phần trăm",
+   "needs": [
+    "N6.11",
+    "N6.12"
+   ],
+   "shows_as": "percent of a percent added"
+  },
+  {
+   "id": "N7.01",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Số hữu tỉ: biểu diễn, so sánh",
+   "needs": [
+    "N6.05",
+    "N6.09"
+   ],
+   "shows_as": "orders negative fractions wrongly"
+  },
+  {
+   "id": "N7.02",
+   "grade": 7,
+   "gateway": true,
+   "name_vi": "Cộng, trừ, nhân, chia số hữu tỉ",
+   "needs": [
+    "N7.01",
+    "N6.07",
+    "N6.10",
+    "N6.11"
+   ],
+   "shows_as": "sign lost when adding negative fractions"
+  },
+  {
+   "id": "N7.03",
+   "grade": 7,
+   "gateway": true,
+   "name_vi": "Quy tắc dấu ngoặc và chuyển vế với số hữu tỉ",
+   "needs": [
+    "N6.08",
+    "N7.02"
+   ],
+   "shows_as": "term moved without changing sign"
+  },
+  {
+   "id": "N7.04",
+   "grade": 7,
+   "gateway": true,
+   "name_vi": "Lũy thừa của số hữu tỉ; lũy thừa của số âm",
+   "needs": [
+    "N6.02",
+    "N7.02"
+   ],
+   "shows_as": "(−2)² and −2² treated the same"
+  },
+  {
+   "id": "N7.05",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Căn bậc hai số học",
+   "needs": [
+    "N7.04"
+   ],
+   "shows_as": "√9 = ±3; √(a + b) = √a + √b"
+  },
+  {
+   "id": "N7.06",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Số vô tỉ, số thực; giá trị tuyệt đối",
+   "needs": [
+    "N7.05"
+   ],
+   "shows_as": "\\|−3\\| = −3"
+  },
+  {
+   "id": "N7.07",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Tỉ lệ thức, dãy tỉ số bằng nhau",
+   "needs": [
+    "N7.02"
+   ],
+   "shows_as": "cross-multiplies wrong terms"
+  },
+  {
+   "id": "N7.08",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Đại lượng tỉ lệ thuận, tỉ lệ nghịch",
+   "needs": [
+    "N7.07"
+   ],
+   "shows_as": "uses direct proportion for inverse"
+  },
+  {
+   "id": "N7.09",
+   "grade": 7,
+   "gateway": true,
+   "name_vi": "Biểu thức đại số, tính giá trị",
+   "needs": [
+    "N7.02",
+    "N7.04"
+   ],
+   "shows_as": "substitutes −2 into x² as −4"
+  },
+  {
+   "id": "N7.10",
+   "grade": 7,
+   "gateway": true,
+   "name_vi": "Đa thức một biến: thu gọn, sắp xếp, bậc",
+   "needs": [
+    "N7.09"
+   ],
+   "shows_as": "combines x and x² terms"
+  },
+  {
+   "id": "N7.11",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Nghiệm của đa thức một biến",
+   "needs": [
+    "N7.09"
+   ],
+   "shows_as": "checks a root by eye, not by substitution"
+  },
+  {
+   "id": "N7.12",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Cộng, trừ đa thức một biến",
+   "needs": [
+    "N7.10",
+    "N7.03"
+   ],
+   "shows_as": "sign lost when subtracting a bracket"
+  },
+  {
+   "id": "N7.13",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Nhân đa thức một biến",
+   "needs": [
+    "N7.12",
+    "N6.02"
+   ],
+   "shows_as": "multiplies only the first term"
+  },
+  {
+   "id": "N7.14",
+   "grade": 7,
+   "gateway": false,
+   "name_vi": "Chia đa thức một biến",
+   "needs": [
+    "N7.13"
+   ],
+   "shows_as": "subtracts wrong in long division"
+  },
+  {
+   "id": "N8.01",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Đơn thức, đa thức nhiều biến, thu gọn",
+   "needs": [
+    "N7.10"
+   ],
+   "shows_as": "combines xy and x²y"
+  },
+  {
+   "id": "N8.02",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Cộng, trừ đa thức nhiều biến",
+   "needs": [
+    "N8.01",
+    "N7.12"
+   ],
+   "shows_as": "sign errors inside brackets"
+  },
+  {
+   "id": "N8.03",
+   "grade": 8,
+   "gateway": true,
+   "name_vi": "Nhân đa thức với đa thức",
+   "needs": [
+    "N8.02",
+    "N7.13"
+   ],
+   "shows_as": "misses a cross term"
+  },
+  {
+   "id": "N8.04",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Chia đa thức cho đơn thức",
+   "needs": [
+    "N8.03"
+   ],
+   "shows_as": "divides only some terms"
+  },
+  {
+   "id": "N8.05",
+   "grade": 8,
+   "gateway": true,
+   "name_vi": "Hằng đẳng thức (a ± b)², a² − b²",
+   "needs": [
+    "N8.03"
+   ],
+   "shows_as": "(a + b)² = a² + b²"
+  },
+  {
+   "id": "N8.06",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Hằng đẳng thức lập phương; tổng, hiệu hai lập phương",
+   "needs": [
+    "N8.05"
+   ],
+   "shows_as": "wrong middle signs"
+  },
+  {
+   "id": "N8.07",
+   "grade": 8,
+   "gateway": true,
+   "name_vi": "Phân tích đa thức thành nhân tử (đặt nhân tử chung, dùng hằng đẳng thức, nhóm)",
+   "needs": [
+    "N8.05",
+    "N8.04"
+   ],
+   "shows_as": "factors partly, leaves a sum"
+  },
+  {
+   "id": "N8.08",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Phân thức: điều kiện xác định, tính chất cơ bản, rút gọn",
+   "needs": [
+    "N8.07",
+    "N6.09"
+   ],
+   "shows_as": "cancels terms, not factors"
+  },
+  {
+   "id": "N8.09",
+   "grade": 8,
+   "gateway": true,
+   "name_vi": "Quy đồng, cộng, trừ phân thức (quy tắc dấu ngoặc)",
+   "needs": [
+    "N8.08",
+    "N6.10",
+    "N7.03"
+   ],
+   "shows_as": "minus before a fraction not spread to every term"
+  },
+  {
+   "id": "N8.10",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Nhân, chia phân thức",
+   "needs": [
+    "N8.08",
+    "N6.11"
+   ],
+   "shows_as": "divides without inverting"
+  },
+  {
+   "id": "N8.11",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Hàm số, mặt phẳng tọa độ, đồ thị",
+   "needs": [
+    "N7.09"
+   ],
+   "shows_as": "swaps x and y coordinates"
+  },
+  {
+   "id": "N8.12",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Hàm số bậc nhất y = ax + b, hệ số góc",
+   "needs": [
+    "N8.11"
+   ],
+   "shows_as": "reads slope from b"
+  },
+  {
+   "id": "N8.13",
+   "grade": 8,
+   "gateway": true,
+   "name_vi": "Phương trình bậc nhất một ẩn",
+   "needs": [
+    "N7.03",
+    "N7.02"
+   ],
+   "shows_as": "divides one side only; equals sign as \"the answer comes next\""
+  },
+  {
+   "id": "N8.14",
+   "grade": 8,
+   "gateway": false,
+   "name_vi": "Giải bài toán bằng cách lập phương trình",
+   "needs": [
+    "N8.13"
+   ],
+   "shows_as": "equation does not match the story"
+  },
+  {
+   "id": "N9.01",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Căn bậc hai, căn bậc ba của số thực",
+   "needs": [
+    "N7.05",
+    "N7.06"
+   ],
+   "shows_as": "∛ of a negative called undefined"
+  },
+  {
+   "id": "N9.02",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Căn thức bậc hai: điều kiện xác định, √(A²) = \\|A\\|",
+   "needs": [
+    "N9.01",
+    "N7.06"
+   ],
+   "shows_as": "√(x²) = x for every x"
+  },
+  {
+   "id": "N9.03",
+   "grade": 9,
+   "gateway": true,
+   "name_vi": "Biến đổi căn: đưa thừa số ra, vào dấu căn; khử mẫu; trục căn thức",
+   "needs": [
+    "N9.02",
+    "N8.05"
+   ],
+   "shows_as": "multiplies by the wrong conjugate"
+  },
+  {
+   "id": "N9.04",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Rút gọn biểu thức chứa căn",
+   "needs": [
+    "N9.03",
+    "N8.09"
+   ],
+   "shows_as": "condition of the expression dropped"
+  },
+  {
+   "id": "N9.05",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Phương trình tích (a₁x + b₁)(a₂x + b₂) = 0",
+   "needs": [
+    "N8.07",
+    "N8.13"
+   ],
+   "shows_as": "divides by a factor and loses a root"
+  },
+  {
+   "id": "N9.06",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Phương trình chứa ẩn ở mẫu",
+   "needs": [
+    "N8.09",
+    "N8.13"
+   ],
+   "shows_as": "condition not checked; extra root kept"
+  },
+  {
+   "id": "N9.07",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Phương trình bậc nhất hai ẩn; hệ hai phương trình",
+   "needs": [
+    "N8.13",
+    "N8.12"
+   ],
+   "shows_as": "one equation solved alone"
+  },
+  {
+   "id": "N9.08",
+   "grade": 9,
+   "gateway": true,
+   "name_vi": "Giải hệ bằng phương pháp thế, cộng đại số",
+   "needs": [
+    "N9.07",
+    "N7.03"
+   ],
+   "shows_as": "sign error when subtracting equations"
+  },
+  {
+   "id": "N9.09",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Giải bài toán bằng cách lập hệ phương trình",
+   "needs": [
+    "N9.08",
+    "N8.14"
+   ],
+   "shows_as": "unknowns defined unclearly"
+  },
+  {
+   "id": "N9.10",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Hàm số y = ax² (a ≠ 0), đồ thị",
+   "needs": [
+    "N8.11",
+    "N7.04"
+   ],
+   "shows_as": "parabola drawn through wrong points for a < 0"
+  },
+  {
+   "id": "N9.11",
+   "grade": 9,
+   "gateway": true,
+   "name_vi": "Phương trình x² = a và phương trình bậc hai khuyết",
+   "needs": [
+    "N9.01",
+    "N8.07"
+   ],
+   "shows_as": "x² = 9 gives only x = 3"
+  },
+  {
+   "id": "N9.12",
+   "grade": 9,
+   "gateway": true,
+   "name_vi": "Phương trình bậc hai: biệt thức Δ, công thức nghiệm",
+   "needs": [
+    "N9.11",
+    "N7.02"
+   ],
+   "shows_as": "−b taken as b when b is negative"
+  },
+  {
+   "id": "N9.13",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Định lí Viète và ứng dụng",
+   "needs": [
+    "N9.12"
+   ],
+   "shows_as": "sum of roots written as b/a"
+  },
+  {
+   "id": "N9.14",
+   "grade": 9,
+   "gateway": false,
+   "name_vi": "Giải bài toán bằng cách lập phương trình bậc hai",
+   "needs": [
+    "N9.12",
+    "N8.14"
+   ],
+   "shows_as": "negative root kept for a length"
+  },
+  {
+   "id": "N9.15",
+   "grade": 9,
+   "gateway": true,
+   "name_vi": "Bất đẳng thức; bất phương trình bậc nhất một ẩn",
+   "needs": [
+    "N8.13",
+    "N6.07"
+   ],
+   "shows_as": "sign not reversed when dividing by a negative"
+  }
+ ]
+}
