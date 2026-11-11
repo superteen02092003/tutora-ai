@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     env: str = "development"
     solve_model: str = "gemini-3.6-flash"
     solve_thinking_model: str = "gemini-2.5-flash-lite"
+    # Topi v1 (trợ lý gia sư): model trích bằng chứng và model viết; đổi qua env sau bài thử 10 buổi.
+    topi_evidence_model: str = "gemini-2.5-flash"
+    topi_write_model: str = "gemini-2.5-flash"
     dotnet_be_url: str = "http://localhost:5166"
 
     @field_validator("dotnet_be_url")
