@@ -20,6 +20,12 @@ class Settings(BaseSettings):
     env: str = "development"
     solve_model: str = "gemini-3.6-flash"
     solve_thinking_model: str = "gemini-2.5-flash-lite"
+    # Topi v1 (trợ lý gia sư): gpt-6-luna (OpenAI) từ 2026-11-11, xem app/services/topi/llm.py.
+    # Đổi qua env; model gemini-* vẫn chạy (khi đó nên để thinking "high").
+    topi_evidence_model: str = "gpt-6-luna"
+    topi_write_model: str = "gpt-6-luna"
+    topi_thinking_level: str = "high"  # chỉ dùng cho model Gemini
+    openai_api_key: str = ""
     dotnet_be_url: str = "http://localhost:5166"
 
     @field_validator("dotnet_be_url")
