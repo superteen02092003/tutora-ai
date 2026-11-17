@@ -64,3 +64,13 @@ def test_repeating_tutor_correction_is_not_self_correction():
     out, n = analysis._guard_self_corrections(pe, te)
     sc = [(p["seg"], p["after"]) for p in out if p["type"] == "self_correction"]
     assert sc == [(98, "error_pointed"), (155, "none")] and n == 2
+
+
+def test_same_error_pattern_in_two_topics_merges_into_one_high_gap():
+    a1 = dict(_att(1, "wrong", "X1", skill="giải bất phương trình", fixed=True), error_pattern="Drops the endpoint case")
+    a2 = dict(_att(5, "wrong", "X2", skill="giao hai khoảng", fixed=True), error_pattern="drops the endpoint case")
+    a3 = _att(6, "alone", "X2", skill="giao hai khoảng")
+    a4 = dict(_att(9, "wrong", "X3", skill="mệnh đề đảo"), error_pattern="accepts claim without testing")
+    g = analysis.gaps({"exercises": [], "attempts": [a1, a2, a3, a4], "habits": [], "doubts": []})
+    rows = [(m["skill"], m["confidence"], m["slip"]) for m in g["maths"]]
+    assert rows == [("giao hai khoảng", "high", False), ("mệnh đề đảo", "medium", False)]

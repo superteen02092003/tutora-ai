@@ -1,4 +1,6 @@
-# Luna (analysis v2) against Claude Opus — comparison, 2026-11-17 (r1–r8)
+# Luna (analysis v2) against Claude Opus — comparison, 2026-11-17 (r1–r10)
+
+**Latest (r9–r10, gaps merged by error pattern): band agreement with Opus A 85% and 80% (mean 82%). Maths-gap confidence agrees on 3/7 and 5/7 (was 2/7). r10 meets both wiring thresholds, r9 only the band one; the merge works when Luna writes the same `error_pattern` for a repeated mistake, and it does not always.**
 
 **Latest (r5–r8): band agreement with Opus A 76–82% (mean 78%; r8 against Opus B 85%). Target ≥ 85% not reached. Behaviour 6 diagnosed and fixed in two steps (r5–r6, r7–r8); it is now limited by noise near the band thresholds, not by a labelling bias. Gaps, lessons 3–4: the skill-naming rule lifts maths recall to 7/7 but confidence still agrees on only 2/7 (threshold 5/7).** Details in §1–§2 and Next; the first-comparison text (r1–r4) is kept below it.
 
@@ -32,6 +34,11 @@
 | Luna v2 r7 vs Opus A (+ error_pointed prompt) | 42/54 (78%) | 5 | 6 | 3 | 5 | 3 | 5 | 5 | 6 | 4 |
 | Luna v2 r8 vs Opus A (same) | **44/54 (82%)** | 5 | 6 | 5 | 4 | 4 | 5 | 5 | 6 | 4 |
 | Luna v2 r8 vs Opus B | 46/54 (85%) | 5 | 6 | 5 | 5 | 4 | 5 | 5 | 6 | 5 |
+| Luna v2 r9 vs Opus A (+ error_pattern merge) | **46/54 (85%)** | 6 | 6 | 3 | 6 | 4 | 3 | 6 | 6 | 6 |
+| Luna v2 r10 vs Opus A (same) | 43/54 (80%) | 6 | 6 | 4 | 5 | 2 | 4 | 6 | 5 | 5 |
+| Luna v2 r9 vs Opus B | 44/54 (81%) | 6 | 6 | 3 | 5 | 4 | 3 | 6 | 6 | 5 |
+| Luna v2 r10 vs Opus B | 43/54 (80%) | 6 | 6 | 4 | 6 | 2 | 4 | 6 | 5 | 4 |
+| Luna v2 r9 vs r10 (stability) | 45/54 (83%) | 6 | 6 | 3 | 5 | 4 | 5 | 6 | 5 | 5 |
 | Luna v2 r5 vs r6 (stability) | 45/54 (83%) | 5 | 6 | 4 | 6 | 4 | 4 | 6 | 4 | 6 |
 | Luna v2 r7 vs r8 (stability) | 41/54 (76%) | 4 | 6 | 2 | 5 | 2 | 6 | 6 | 6 | 4 |
 | Luna v1 (production) vs Opus A | **33/54 (61%)** | 5 | 6 | 3 | 6 | 2 | 1 | 3 | 3 | 4 |
@@ -70,6 +77,30 @@ Score = pupil `self_correction` with `after = error_pointed` ÷ pupil `error`; m
 
 **r5–r6 (skill-naming rule):** maths recall **7/7** in both (M5 found for the first time); learning skills 5/5. Precision: r5 has one extra low slip (graphing an inequality in two variables, which Opus lists as shown correct); in r6 every extra row maps to M3/M4 attempts. **Maths confidence agrees on 2/7 in both runs (M1, M4); threshold 5/7 not met.** The naming rule did not stop the splitting: M3 is still three rows (converse, equivalence, universal claim), and L4 M1 is two rows marked slips because each error was fixed after a hint, while Opus calls it high from the tutor's "you are still repeating this error". Learning-skill confidence agrees on 3/5 (r5) and 2/5 (r6). r7–r8 gaps not judged (same naming prompt as r5–r6).
 
+### Gap merge by error pattern (r9–r10)
+
+- **Why code alone could not merge:** in r5–r6 the split rows of one Opus gap share no field — different skill words, exercises, and (for L4 M1) skill-map nodes. What they share is the mistake: "excludes −2 although x ≤ −2" (solving an inequality) and "excludes 4 although it is in both intervals" (intersecting intervals) are both Opus L4 M1.
+- **Change:** each wrong / hinted / unfinished attempt now carries `error_pattern`, the mistake in 2–6 English words, independent of topic, repeated word for word when the mistake recurs. Code (`analysis._merge_by_error_pattern`, before confidence is computed) merges skill groups that share a pattern; the merged gap keeps the name of its largest group, and the usual rule applies (≥ 2 problems → high, not a slip).
+
+| Opus gap | Luna r9 | Luna r10 |
+|---|---|---|
+| L3 M1 negating inequalities, high | **high**, merged (1271–3385) | **high**, merged |
+| L3 M2 P⇒Q with false P, high | medium | **high** |
+| L3 M3 converse / equivalence / ∀ by intuition, high | split in 3, **high** + 2 medium | **high**, merged into one row (2083, 2272, 3242) |
+| L3 M4 proposition vs open sentence, medium | **medium** | split in 3, **medium** |
+| L3 M5 proving ∃ false, low | found, medium | found, medium |
+| L4 M1 interval brackets, high | merged (834 + 2100), medium (lowered by a transcript doubt at one attempt) | **high**, merged |
+| L4 M2 negating ∀/∃, high | low (slip) | low (slip) |
+| L3 L1 answers before thinking, high | medium | medium |
+| L3 L2 no self-check, medium | **missed** | **medium** |
+| L3 L3 no written working, low | **low** | **low** |
+| L4 L1 does not check, medium | low | low |
+| L4 L2 drops rule under test, low | **low** | medium |
+
+- **Maths:** recall 7/7 in both; confidence agrees on **3/7 (r9)** and **5/7 (r10)**. Learning skills: recall 4/5 and 5/5; confidence 2/5 and 2/5.
+- **Precision:** r9 one extra low slip (finding a second witness for an existential claim); r10 one extra **high** (graphing an inequality in two variables, 4296/4348 after hints; Opus lists it as shown correct — the same extra as r2).
+- **Limit:** the merge is only as good as the pattern wording. r10 wrote one pattern for the converse, equivalence and universal-claim errors, so M3 merged; r9 wrote "accepts converse without counterexample" and "accepts equivalence without checking both directions", so it did not. L4 M2 stays a slip in both: one wrong item, fixed after pointing, which is what Opus also sees, but Opus rates it high from the tutor's remark that it improved since last lesson — a cross-lesson signal v2 does not have.
+
 Earlier notes, r1–r2:
 
 - **Recall:** maths 6/7 in both runs; learning skills 5/5.
@@ -79,6 +110,7 @@ Earlier notes, r1–r2:
 
 ## Next
 
+0. **r9–r10 (2026-11-17), error-pattern merge:** band 85% / 80%, maths confidence 3/7 / 5/7. One run of two meets both thresholds; not stable enough to wire in yet. Next options: (a) give the attempts pass the error patterns already used in this lesson (a second short call, or patterns listed before attempts), so recurring mistakes reuse the same words; (b) a tutor remark of repetition ("lỗi này con còn lặp lại" — "you are still repeating this error") raises confidence by one step; (c) Khanh's hand check of r10.
 0. **r5–r8 (2026-11-17):** 78%, 76%, 78%, 82% against Opus A; behaviour 6 fixed in two steps (above). Wiring threshold (≥ 80% and maths confidence ≥ 5/7) **not met**: band agreement is just under the line on average (78%), confidence is 2/7. Not wired into the pipeline. Options: (a) merge split gaps in code (same exercise block and same kind of error) and let a tutor's "repeated error" remark raise confidence, then re-measure gaps; (b) Khanh's hand check of r8 against Opus, to see whether Luna's narrower gaps are wrong or only finer.
 1. r3–r4 (homework and praise fixes): 74% and 80%; behaviour 7 rose to 4–5/6, 9 to 4–5/6; 6 (errors found) still 2–3/6. Next: run r5–r6 with the skill-naming rule; same script, ~$0.02 a lesson.
 2. If band agreement reaches ≥ 80% and maths-gap confidence agrees on ≥ 5 of 7, wire v2 into `pipeline.py` behind a setting.

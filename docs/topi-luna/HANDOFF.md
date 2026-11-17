@@ -20,7 +20,7 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 - Test: `python -m pytest -q tests/test_topi_analysis.py`
 
 ## Việc tiếp
-1. (Đã xong r5–r8; dữ liệu trong cùng thư mục chấm.) Tiếp: gộp lỗ hổng bị tách bằng code (cùng khối bài + cùng loại lỗi; câu "lỗi này con còn lặp lại" của gia sư nâng độ tin cậy), rồi đo lại lỗ hổng; hoặc Khanh chấm tay r8 so với Opus. Lần chạy mới dùng `--start 9`.
+1. (Đã xong r5–r10; dữ liệu trong cùng thư mục chấm.) r9–r10 gộp lỗ hổng theo `error_pattern` (model ghi kiểu lỗi, code gộp): band 85%/80%, độ tin cậy toán 3/7 và 5/7 — r10 đạt cả hai ngưỡng, r9 chưa. Tiếp: cho lượt attempts dùng lại đúng chữ của kiểu lỗi đã gặp; câu "lỗi này con còn lặp lại" nâng độ tin cậy; hoặc Khanh chấm tay r10. Lần chạy mới dùng `--start 11`.
 2. Nếu đạt ngưỡng: nối v2 vào `pipeline.py` sau một setting, sửa `topi-api-contract.md` trước; nhánh/PR riêng.
 3. Cho plan và tips dùng đầu ra v2 (trích dẫn Sai/Đúng từ `attempts`; tips theo band thấp nhất; xưng "bạn"/"con" theo audit S4).
 4. Không push lên main, không deploy, không ghi DB production. Tài liệu cho Michael viết tiếng Anh; không ghi tên học sinh (D3).

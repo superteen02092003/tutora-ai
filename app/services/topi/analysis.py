@@ -59,7 +59,8 @@ TUTOR_SCHEMA = _obj({
 ATTEMPTS_SCHEMA = _obj({
     "attempts": _arr(_obj({"exercise_id": S, "seg": I, "quote": S, "hint_seg": NI, "hint_quote": S,
                            "label": _enum("alone", "after_hint", "wrong", "not_finished"),
-                           "fixed_alone_after_pointing": B, "skill": S, "skill_node": S, "what_went_wrong": S})),
+                           "fixed_alone_after_pointing": B, "skill": S, "skill_node": S, "what_went_wrong": S,
+                           "error_pattern": S})),
     "habits": _arr(_obj({"seg": I, "quote": S, "speaker": _enum("pupil", "tutor"),
                          "habit": _enum("answers_before_thinking", "no_self_check", "no_written_working",
                                         "drops_known_rule_under_test", "gives_up_early"),
@@ -176,6 +177,42 @@ def _down(c: str) -> str:
     return CONF[max(0, CONF.index(c) - 1)]
 
 
+def _merge_by_error_pattern(groups: dict[str, list[dict]]) -> dict[str, list[dict]]:
+    """Merge skill groups whose wrong/hinted attempts share an error_pattern (eval 2026-11-17, r5–r6).
+
+    Luna names the topic of each exercise, so one mistake made in three topics became three narrow,
+    low-confidence gaps where Opus has one high gap. The model tags the mistake; code decides the merge.
+    The merged gap keeps the name of its largest group.
+    """
+    keys = list(groups)
+    parent = {k: k for k in keys}
+
+    def find(k: str) -> str:
+        while parent[k] != k:
+            parent[k] = parent[parent[k]]
+            k = parent[k]
+        return k
+
+    owner: dict[str, str] = {}
+    for k in keys:
+        for a in groups[k]:
+            pat = _WS.sub(" ", (a.get("error_pattern") or "").strip().lower())
+            if not pat or a.get("label") not in ("wrong", "after_hint", "not_finished"):
+                continue
+            if pat in owner:
+                parent[find(k)] = find(owner[pat])
+            else:
+                owner[pat] = k
+    merged: dict[str, list[str]] = {}
+    for k in keys:
+        merged.setdefault(find(k), []).append(k)
+    out: dict[str, list[dict]] = {}
+    for members in merged.values():
+        name = max(members, key=lambda m: (len(groups[m]), -keys.index(m)))
+        out[name] = [a for m in members for a in groups[m]]
+    return out
+
+
 def gaps(ev: dict[str, Any]) -> dict[str, Any]:
     nodes = skill_map.by_id()
     ex_skill = {e["id"]: e.get("skill", "") for e in ev.get("exercises") or []}
@@ -183,6 +220,7 @@ def gaps(ev: dict[str, Any]) -> dict[str, Any]:
     groups: dict[str, list[dict]] = {}
     for a in ev.get("attempts") or []:
         groups.setdefault(_skill_key(a, ex_skill), []).append(a)
+    groups = _merge_by_error_pattern(groups)
 
     maths, shown_correct, slips = [], [], []
     for key, atts in groups.items():
