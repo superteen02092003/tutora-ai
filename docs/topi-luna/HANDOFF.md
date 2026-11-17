@@ -4,7 +4,8 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 
 ## Trạng thái
 - Luna v2 cùng band với Opus 70–72% (production v1 61%, Opus–Opus 96%), 6 buổi golden 3–8. Lỗ hổng buổi 3–4: recall 6/7 toán, 5/5 kỹ năng học; độ tin cậy lệch vì Luna tách kỹ năng.
-- **Chưa đo:** r3–r4 (sửa homework_checked + criticism_person) đã chấm: 74% và 80%, hành vi 6 vẫn yếu (2–3/6); quy tắc đặt tên kỹ năng (sau r3–r4) — chưa chạy lần nào (sẽ là r5–r6).
+- r3–r4 (sửa homework_checked + criticism_person): 74% và 80%; hành vi 6 vẫn yếu (2–3/6).
+- **Chưa đo:** quy tắc đặt tên kỹ năng (thêm sau r3–r4) — chưa chạy lần nào (sẽ là r5–r6).
 - Ngưỡng để nối vào pipeline: ≥ 80% band, độ tin cậy lỗ hổng toán khớp ≥ 5/7.
 
 ## Dữ liệu (ngoài repo — có trích dẫn buổi học của trẻ vị thành niên, không commit)
