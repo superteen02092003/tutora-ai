@@ -33,7 +33,8 @@ def is_openai(model: str) -> bool:
     return model.startswith("gpt-")
 
 
-async def _openai_call(*, model: str, system: str, prompt: str, max_output_tokens: int) -> tuple[str, Any]:
+async def _openai_call(*, model: str, system: str, prompt: str, max_output_tokens: int,
+                       schema: dict | None = None, reasoning_effort: str | None = None) -> tuple[str, Any]:
     """Một lời gọi Chat Completions. Trả (text, response giả dạng Gemini cho telemetry).
 
     Không gửi temperature: gpt-6-luna chỉ nhận mặc định. Không đặt reasoning_effort:
@@ -50,6 +51,12 @@ async def _openai_call(*, model: str, system: str, prompt: str, max_output_token
         "response_format": {"type": "json_object"},
         "max_completion_tokens": max_output_tokens,
     }
+    if schema is not None:
+        # Structured Outputs: model không thể đổi tên field hay bỏ field (khác json_object).
+        body["response_format"] = {"type": "json_schema",
+                                   "json_schema": {"name": "out", "strict": True, "schema": schema}}
+    if reasoning_effort:
+        body["reasoning_effort"] = reasoning_effort
     async with httpx.AsyncClient(timeout=_OPENAI_TIMEOUT) as http:
         r = await http.post(_OPENAI_URL, json=body, headers={"Authorization": f"Bearer {key}"})
     if r.status_code >= 400:
@@ -70,14 +77,16 @@ async def _openai_call(*, model: str, system: str, prompt: str, max_output_token
 
 
 async def generate_json(client, *, model: str, feature: str, system: str, prompt: str,
-                        temperature: float = 0.2, max_output_tokens: int = 32768) -> Any:
+                        temperature: float = 0.2, max_output_tokens: int = 32768,
+                        schema: dict | None = None, reasoning_effort: str | None = None) -> Any:
     last: Exception | None = None
     for attempt in range(2):
         t0 = time.monotonic()
         with track(feature, model) as t:
             if is_openai(model):
                 text, resp = await _openai_call(model=model, system=system, prompt=prompt,
-                                                max_output_tokens=max_output_tokens)
+                                                max_output_tokens=max_output_tokens, schema=schema,
+                                                reasoning_effort=reasoning_effort)
                 t.done(resp)
             else:
                 level = get_settings().topi_thinking_level
