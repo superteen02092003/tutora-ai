@@ -4,7 +4,7 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 
 ## Trạng thái
 - Luna v2 cùng band với Opus 70–72% (production v1 61%, Opus–Opus 96%), 6 buổi golden 3–8. Lỗ hổng buổi 3–4: recall 6/7 toán, 5/5 kỹ năng học; độ tin cậy lệch vì Luna tách kỹ năng.
-- **Chưa đo:** lần chạy r3–r4 (đã sửa prompt homework_checked + criticism_person) — đã chạy nhưng chưa chấm; quy tắc đặt tên kỹ năng (sau r3–r4) — chưa chạy lần nào (sẽ là r5–r6).
+- **Chưa đo:** r3–r4 (sửa homework_checked + criticism_person) đã chấm: 74% và 80%, hành vi 6 vẫn yếu (2–3/6); quy tắc đặt tên kỹ năng (sau r3–r4) — chưa chạy lần nào (sẽ là r5–r6).
 - Ngưỡng để nối vào pipeline: ≥ 80% band, độ tin cậy lỗ hổng toán khớp ≥ 5/7.
 
 ## Dữ liệu (ngoài repo — có trích dẫn buổi học của trẻ vị thành niên, không commit)
@@ -19,7 +19,7 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 - Test: `python -m pytest -q tests/test_topi_analysis.py`
 
 ## Việc tiếp
-1. Chấm r3–r4, rồi chạy r5–r6; cập nhật bảng trong `03-eval.md`.
+1. Chạy r5–r6 (quy tắc đặt tên kỹ năng), so lỗ hổng buổi 3–4 với Opus; sửa hành vi 6 (error_pointed bị đếm thiếu); cập nhật bảng trong `03-eval.md`.
 2. Nếu đạt ngưỡng: nối v2 vào `pipeline.py` sau một setting, sửa `topi-api-contract.md` trước; nhánh/PR riêng.
 3. Cho plan và tips dùng đầu ra v2 (trích dẫn Sai/Đúng từ `attempts`; tips theo band thấp nhất; xưng "bạn"/"con" theo audit S4).
 4. Không push lên main, không deploy, không ghi DB production. Tài liệu cho Michael viết tiếng Anh; không ghi tên học sinh (D3).

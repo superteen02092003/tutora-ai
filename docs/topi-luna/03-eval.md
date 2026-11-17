@@ -21,6 +21,9 @@
 | Opus A vs Opus B (ceiling) | **52/54 (96%)** | 6/6 | 6/6 | 6/6 | 5/6 | 6/6 | 6/6 | 6/6 | 6/6 | 5/6 |
 | Luna v2 r1 vs Opus A | **38/54 (70%)** | 5 | 5 | 4 | 5 | 2 | 3 | 6 | 2 | 6 |
 | Luna v2 r2 vs Opus A | 39/54 (72%) | 6 | 6 | 3 | 5 | 2 | 3 | 6 | 3 | 5 |
+| Luna v2 r3 vs Opus A (homework + praise fix) | **40/54 (74%)** | 5 | 6 | 5 | 4 | 3 | 4 | 5 | 4 | 4 |
+| Luna v2 r4 vs Opus A (same fix) | **43/54 (80%)** | 6 | 6 | 4 | 5 | 2 | 5 | 5 | 5 | 5 |
+| Luna v2 r3 vs r4 (stability) | 42/54 (78%) | 5 | 6 | 3 | 5 | 4 | 5 | 6 | 5 | 3 |
 | Luna v2 r1 vs r2 (stability) | 42/54 (78%) | 5 | 5 | 2 | 6 | 3 | 6 | 6 | 4 | 5 |
 | Luna v1 (production) vs Opus A | **33/54 (61%)** | 5 | 6 | 3 | 6 | 2 | 1 | 3 | 3 | 4 |
 
@@ -54,6 +57,6 @@
 
 ## Next
 
-1. Read r3–r4 (homework and praise fixes) and run r5–r6 with the skill-naming rule; same script, ~$0.02 a lesson.
+1. r3–r4 (homework and praise fixes): 74% and 80%; behaviour 7 rose to 4–5/6, 9 to 4–5/6; 6 (errors found) still 2–3/6. Next: run r5–r6 with the skill-naming rule; same script, ~$0.02 a lesson.
 2. If band agreement reaches ≥ 80% and maths-gap confidence agrees on ≥ 5 of 7, wire v2 into `pipeline.py` behind a setting.
 3. All numbers are Luna against Opus; Khanh's hand check (golden-set step 5) is what turns them into accuracy.
