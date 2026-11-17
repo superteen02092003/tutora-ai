@@ -100,8 +100,12 @@ async def label(client, *, model: str, segments: list[dict[str, Any]], grade: Op
     tutor, attempts = await asyncio.gather(tutor_t, att_t)
     chances = json.dumps([{"seg": e["seg"], "skill": e["skill"]} for e in tutor.get("tutor_events") or []
                           if e.get("type") == "chance"], ensure_ascii=False)
+    err_moments = json.dumps([{"seg": e["seg"], "tutor": "pointed" if e["type"] == "error_pointed" else "resolved_by_tutor"}
+                              for e in tutor.get("tutor_events") or []
+                              if e.get("type") in ("error_pointed", "error_resolved_by_tutor")], ensure_ascii=False)
     pupil = await generate_json(client, feature="topi_a_pupil", system=P.PUPIL_EVENTS, schema=PUPIL_SCHEMA,
-                                prompt=head + f"Exercises:\n{ex_list}\n\nTutor chances:\n{chances}\n\nTranscript:\n{tr}", **kw)
+                                prompt=head + f"Exercises:\n{ex_list}\n\nTutor chances:\n{chances}\n\n"
+                                f"Tutor error moments:\n{err_moments}\n\nTranscript:\n{tr}", **kw)
     return {**structure, **tutor, **attempts, **pupil}
 
 
@@ -126,8 +130,34 @@ def check(raw: dict[str, Any], segments: list[dict[str, Any]]) -> dict[str, Any]
     out["exercises"] = [e for e in raw.get("exercises") or [] if 0 <= e.get("start_seg", -1) <= e.get("end_seg", -1) < n]
     out["ack_segments"] = [i for i in raw.get("ack_segments") or []
                            if isinstance(i, int) and 0 <= i < n and segments[i].get("speaker") == "student"]
-    out["check"] = {"dropped": dropped, "dropped_n": len(dropped)}
+    out["pupil_events"], relabelled = _guard_self_corrections(out["pupil_events"], out["tutor_events"])
+    out["check"] = {"dropped": dropped, "dropped_n": len(dropped), "self_correction_relabelled": relabelled}
     return out
+
+
+def _guard_self_corrections(pe: list[dict[str, Any]], te: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], int]:
+    """A pupil repeating a correction the tutor already said is not a self-correction (behaviour 6).
+
+    Look at the tutor's last error move before the self_correction (after the pupil's last error, if any):
+    error_resolved_by_tutor -> drop it; error_pointed -> after="error_pointed"; none -> after="none".
+    """
+    errs = [p["seg"] for p in pe if p.get("type") == "error"]
+    moves = sorted((t["seg"], t["type"]) for t in te if t.get("type") in ("error_pointed", "error_resolved_by_tutor"))
+    out, n = [], 0
+    for p in pe:
+        if p.get("type") == "self_correction":
+            s = p["seg"]
+            # the move on the same seg as the pupil's error can belong to it; moves on the pupil's own seg cannot
+            last_err = max((e for e in errs if e < s), default=-1)
+            last = next((m for m in reversed(moves) if last_err <= m[0] < s), None)
+            if last and last[1] == "error_resolved_by_tutor":
+                n += 1
+                continue
+            after = "error_pointed" if last else "none"
+            if p.get("after") != after:
+                p, n = dict(p, after=after), n + 1
+        out.append(p)
+    return out, n
 
 
 # ------------------------------------------------------------------ gaps (process 07 steps 5–7, scoring-model §2)

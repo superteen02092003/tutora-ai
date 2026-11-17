@@ -94,10 +94,11 @@ def main() -> None:
         async def all_():
             await asyncio.gather(*(run_lesson(folder, i, args.runs, args.baseline, args.effort, args.start) for i in ids))
         asyncio.run(all_())
-    pairs = [("opusA", "opusB")] + [(f"luna_v2_r{k}", "opusA") for k in (1, 2, 3, 4)] + [("luna_v2_r1", "opusB")] \
-        + [("luna_v2_r1", "luna_v2_r2"), ("luna_v2_r3", "luna_v2_r4"), ("luna_v2_r3", "opusB"), ("luna_old", "opusA"), ("luna_old", "opusB")]
+    runs = sorted((p.name for p in folder.glob("luna_v2_r*") if p.is_dir()), key=lambda n: int(n.rsplit("r", 1)[1]))
+    pairs = [("opusA", "opusB")] + [(r, "opusA") for r in runs] + [(r, "opusB") for r in runs] \
+        + [(runs[i], runs[i + 1]) for i in range(0, len(runs) - 1, 2)] + [("luna_old", "opusA"), ("luna_old", "opusB")]
     report = {f"{a} vs {b}": agreement(folder, ids, a, b) for a, b in pairs}
-    report["bands"] = {lid[:8]: {s: bands_of(folder, s, lid) for s in ("opusA", "opusB", "luna_v2_r1", "luna_v2_r2", "luna_v2_r3", "luna_v2_r4", "luna_old")}
+    report["bands"] = {lid[:8]: {s: bands_of(folder, s, lid) for s in ["opusA", "opusB", *runs, "luna_old"]}
                        for lid in ids}
     (folder / "band_agreement.json").write_text(json.dumps(report, ensure_ascii=False, indent=1), encoding="utf-8")
     for k, v in report.items():

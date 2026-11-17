@@ -5,7 +5,7 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 ## Trạng thái
 - Luna v2 cùng band với Opus 70–72% (production v1 61%, Opus–Opus 96%), 6 buổi golden 3–8. Lỗ hổng buổi 3–4: recall 6/7 toán, 5/5 kỹ năng học; độ tin cậy lệch vì Luna tách kỹ năng.
 - r3–r4 (sửa homework_checked + criticism_person): 74% và 80%; hành vi 6 vẫn yếu (2–3/6).
-- **Chưa đo:** quy tắc đặt tên kỹ năng (thêm sau r3–r4) — chưa chạy lần nào (sẽ là r5–r6).
+- r5–r8 (quy tắc đặt tên kỹ năng + sửa hành vi 6 hai bước): 78%, 76%, 78%, 82% so với Opus A (r8 so với Opus B 85%). Hành vi 6 thực ra bị **đếm thừa** self_correction (học sinh lặp lại lời sửa của gia sư); đã sửa bằng `_guard_self_corrections` + prompt; r7–r8 sửa thêm việc gán thiếu error_pointed. Lỗ hổng buổi 3–4 (r5–r6): recall toán 7/7, nhưng độ tin cậy chỉ khớp 2/7 (vẫn tách M3, L4 M1). **Chưa đạt ngưỡng nối pipeline.** Chi tiết: `03-eval.md`.
 - Ngưỡng để nối vào pipeline: ≥ 80% band, độ tin cậy lỗ hổng toán khớp ≥ 5/7.
 
 ## Dữ liệu (ngoài repo — có trích dẫn buổi học của trẻ vị thành niên, không commit)
@@ -20,7 +20,7 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 - Test: `python -m pytest -q tests/test_topi_analysis.py`
 
 ## Việc tiếp
-1. Chạy r5–r6 (quy tắc đặt tên kỹ năng), so lỗ hổng buổi 3–4 với Opus; sửa hành vi 6 (error_pointed bị đếm thiếu); cập nhật bảng trong `03-eval.md`.
+1. (Đã xong r5–r8; dữ liệu trong cùng thư mục chấm.) Tiếp: gộp lỗ hổng bị tách bằng code (cùng khối bài + cùng loại lỗi; câu "lỗi này con còn lặp lại" của gia sư nâng độ tin cậy), rồi đo lại lỗ hổng; hoặc Khanh chấm tay r8 so với Opus. Lần chạy mới dùng `--start 9`.
 2. Nếu đạt ngưỡng: nối v2 vào `pipeline.py` sau một setting, sửa `topi-api-contract.md` trước; nhánh/PR riêng.
 3. Cho plan và tips dùng đầu ra v2 (trích dẫn Sai/Đúng từ `attempts`; tips theo band thấp nhất; xưng "bạn"/"con" theo audit S4).
 4. Không push lên main, không deploy, không ghi DB production. Tài liệu cho Michael viết tiếng Anh; không ghi tên học sinh (D3).

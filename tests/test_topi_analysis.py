@@ -53,3 +53,14 @@ def test_schemas_are_strict():
             walk(s["items"])
     for sch in (analysis.STRUCTURE_SCHEMA, analysis.TUTOR_SCHEMA, analysis.ATTEMPTS_SCHEMA, analysis.PUPIL_SCHEMA):
         walk(sch)
+
+
+def test_repeating_tutor_correction_is_not_self_correction():
+    pe = [{"type": "error", "seg": 8}, {"type": "self_correction", "seg": 12, "after": "error_pointed"},
+          {"type": "error", "seg": 96}, {"type": "self_correction", "seg": 98, "after": "error_pointed"},
+          {"type": "error", "seg": 150}, {"type": "self_correction", "seg": 155, "after": "error_pointed"}]
+    te = [{"type": "error_pointed", "seg": 9}, {"type": "error_resolved_by_tutor", "seg": 11},
+          {"type": "error_pointed", "seg": 97}]
+    out, n = analysis._guard_self_corrections(pe, te)
+    sc = [(p["seg"], p["after"]) for p in out if p["type"] == "self_correction"]
+    assert sc == [(98, "error_pointed"), (155, "none")] and n == 2
