@@ -1,7 +1,819 @@
 {
- "source": "toptutor-main/01-background/maths-skill-map.md",
- "generated": "2026-11-11",
+ "source": "toptutor-main/10-knowledge/maths-skill-map-grades-1-5.md + maths-skill-map.md + maths-skill-map-grades-10-12.md",
+ "generated": "2026-11-17",
  "nodes": [
+  {
+   "id": "N1.01",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Đếm, đọc, viết các số trong phạm vi 100",
+   "needs": [],
+   "shows_as": "writes \"sixty-four\" as 604; swaps 46 and 64"
+  },
+  {
+   "id": "N1.02",
+   "grade": 1,
+   "gateway": true,
+   "name_vi": "Chục và đơn vị; số tròn chục",
+   "needs": [
+    "N1.01"
+   ],
+   "shows_as": "says the 4 in 45 means four"
+  },
+  {
+   "id": "N1.03",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "So sánh, xếp thứ tự các số trong phạm vi 100",
+   "needs": [
+    "N1.02"
+   ],
+   "shows_as": "29 > 31 because 9 > 1"
+  },
+  {
+   "id": "N1.04",
+   "grade": 1,
+   "gateway": true,
+   "name_vi": "Ý nghĩa phép cộng, phép trừ (thêm, bớt, gộp, tách)",
+   "needs": [
+    "N1.01"
+   ],
+   "shows_as": "cannot say which picture shows 7 − 3"
+  },
+  {
+   "id": "N1.05",
+   "grade": 1,
+   "gateway": true,
+   "name_vi": "Cộng, trừ nhẩm trong phạm vi 10",
+   "needs": [
+    "N1.04"
+   ],
+   "shows_as": "counts from 1 every time; 7 − 3 = 5 (counts the start number)"
+  },
+  {
+   "id": "N1.06",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Cộng, trừ nhẩm các số tròn chục",
+   "needs": [
+    "N1.02",
+    "N1.05"
+   ],
+   "shows_as": "40 + 30 = 7 or 403"
+  },
+  {
+   "id": "N1.07",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Cộng, trừ không nhớ trong phạm vi 100",
+   "needs": [
+    "N1.02",
+    "N1.05"
+   ],
+   "shows_as": "34 + 5 = 84 (ones added to the tens)"
+  },
+  {
+   "id": "N1.08",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Tính có hai dấu cộng, trừ, từ trái sang phải",
+   "needs": [
+    "N1.05"
+   ],
+   "shows_as": "9 − 3 + 2 worked as 9 − 5"
+  },
+  {
+   "id": "N1.09",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Viết phép tính phù hợp với bài toán có lời văn",
+   "needs": [
+    "N1.04"
+   ],
+   "shows_as": "picks + or − from one word in the story"
+  },
+  {
+   "id": "H1.01",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Vị trí, định hướng: trên – dưới, phải – trái, trước – sau, ở giữa",
+   "needs": [],
+   "shows_as": "swaps left and right"
+  },
+  {
+   "id": "H1.02",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Nhận dạng hình vuông, tròn, tam giác, chữ nhật; khối lập phương, khối hộp chữ nhật",
+   "needs": [],
+   "shows_as": "a tilted square is \"not a square\""
+  },
+  {
+   "id": "H1.03",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Dài hơn, ngắn hơn; đo độ dài bằng thước, đơn vị cm",
+   "needs": [
+    "N1.01"
+   ],
+   "shows_as": "starts measuring at 1, not 0"
+  },
+  {
+   "id": "H1.04",
+   "grade": 1,
+   "gateway": false,
+   "name_vi": "Xem giờ đúng; các ngày trong tuần; xem lịch tờ",
+   "needs": [
+    "N1.01"
+   ],
+   "shows_as": "reads the minute hand as the hour"
+  },
+  {
+   "id": "N2.01",
+   "grade": 2,
+   "gateway": true,
+   "name_vi": "Số trong phạm vi 1000; viết số thành tổng trăm, chục, đơn vị",
+   "needs": [
+    "N1.02"
+   ],
+   "shows_as": "writes \"three hundred and five\" as 3005 or 35"
+  },
+  {
+   "id": "N2.02",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Số liền trước, liền sau; tia số; so sánh, xếp thứ tự trong phạm vi 1000",
+   "needs": [
+    "N2.01",
+    "N1.03"
+   ],
+   "shows_as": "puts 500 near the end of a 0–1000 line"
+  },
+  {
+   "id": "N2.03",
+   "grade": 2,
+   "gateway": true,
+   "name_vi": "Cộng, trừ nhẩm qua 10 trong phạm vi 20",
+   "needs": [
+    "N1.05"
+   ],
+   "shows_as": "13 − 5 = 7; 8 + 5 counted on fingers"
+  },
+  {
+   "id": "N2.04",
+   "grade": 2,
+   "gateway": true,
+   "name_vi": "Cộng, trừ có nhớ (một lượt) trong phạm vi 1000; số hạng, tổng, số bị trừ, số trừ, hiệu",
+   "needs": [
+    "N2.01",
+    "N2.03",
+    "N1.07"
+   ],
+   "shows_as": "52 − 27 = 35 (smaller digit taken from larger); carried 1 dropped"
+  },
+  {
+   "id": "N2.05",
+   "grade": 2,
+   "gateway": true,
+   "name_vi": "Ý nghĩa phép nhân, phép chia (nhóm bằng nhau, chia đều); thừa số, tích, số bị chia, số chia, thương",
+   "needs": [
+    "N1.04",
+    "N2.03"
+   ],
+   "shows_as": "reads 3 × 4 as 3 + 4; cannot show 12 : 3 as sharing"
+  },
+  {
+   "id": "N2.06",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Bảng nhân 2, 5; bảng chia 2, 5",
+   "needs": [
+    "N2.05"
+   ],
+   "shows_as": "counts up by 2s from 0 for each fact"
+  },
+  {
+   "id": "N2.07",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Bài toán một bước: thêm, bớt; nhiều hơn, ít hơn",
+   "needs": [
+    "N1.09",
+    "N2.04"
+   ],
+   "shows_as": "\"Lan has 5 more than Minh, Lan has 12\": adds to find Minh"
+  },
+  {
+   "id": "H2.01",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Điểm, đoạn thẳng, đường thẳng, đường cong, đường gấp khúc, ba điểm thẳng hàng; tứ giác; khối trụ, khối cầu; vẽ đoạn thẳng",
+   "needs": [
+    "H1.02",
+    "H1.03"
+   ],
+   "shows_as": "calls a segment and a line the same"
+  },
+  {
+   "id": "H2.02",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Đơn vị đo độ dài dm, m, km; quan hệ và chuyển đổi",
+   "needs": [
+    "H1.03",
+    "N2.01"
+   ],
+   "shows_as": "1 m = 10 cm"
+  },
+  {
+   "id": "H2.03",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Khối lượng (kg), dung tích (l); cân, đong; ước lượng",
+   "needs": [
+    "N2.01"
+   ],
+   "shows_as": "the bigger object must be heavier"
+  },
+  {
+   "id": "H2.04",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Độ dài đường gấp khúc",
+   "needs": [
+    "H2.01",
+    "N2.04"
+   ],
+   "shows_as": "measures the straight gap from end to end"
+  },
+  {
+   "id": "H2.05",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Một ngày 24 giờ, một giờ 60 phút; giờ khi kim phút chỉ 3, 6; ngày trong tháng; tiền Việt Nam",
+   "needs": [
+    "H1.04"
+   ],
+   "shows_as": "8 giờ 15 phút read as 8 giờ 3 phút"
+  },
+  {
+   "id": "T2.01",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Thu thập, phân loại, kiểm đếm; đọc, nhận xét biểu đồ tranh",
+   "needs": [
+    "N1.01"
+   ],
+   "shows_as": "reads the row of the wrong category"
+  },
+  {
+   "id": "T2.02",
+   "grade": 2,
+   "gateway": false,
+   "name_vi": "Có thể, chắc chắn, không thể",
+   "needs": [],
+   "shows_as": "calls a likely event \"chắc chắn\" (certain)"
+  },
+  {
+   "id": "N3.01",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Số trong phạm vi 100 000; cấu tạo thập phân; số tròn nghìn, tròn mười nghìn",
+   "needs": [
+    "N2.01"
+   ],
+   "shows_as": "writes \"forty thousand and fifty\" as 4050"
+  },
+  {
+   "id": "N3.02",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "So sánh, xếp thứ tự trong phạm vi 100 000; làm tròn đến chục, trăm, nghìn, mười nghìn",
+   "needs": [
+    "N3.01",
+    "N2.02"
+   ],
+   "shows_as": "rounds 1 349 to the nearest hundred as 1 400 (rounds digit by digit)"
+  },
+  {
+   "id": "N3.03",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Cộng, trừ các số có đến 5 chữ số (nhớ không quá hai lượt)",
+   "needs": [
+    "N2.04",
+    "N3.01"
+   ],
+   "shows_as": "4 005 − 1 278 wrong at the zeros (borrow across zero)"
+  },
+  {
+   "id": "N3.04",
+   "grade": 3,
+   "gateway": true,
+   "name_vi": "Bảng nhân, bảng chia 2–9",
+   "needs": [
+    "N2.06"
+   ],
+   "shows_as": "7 × 8 = 54; counts up for each fact"
+  },
+  {
+   "id": "N3.05",
+   "grade": 3,
+   "gateway": true,
+   "name_vi": "Nhân với, chia cho số có một chữ số; chia hết, chia có dư",
+   "needs": [
+    "N3.04",
+    "N3.03"
+   ],
+   "shows_as": "618 : 6 = 13 (zero missing in the quotient); remainder ≥ divisor"
+  },
+  {
+   "id": "N3.06",
+   "grade": 3,
+   "gateway": true,
+   "name_vi": "Biểu thức số: tính giá trị (có, không có dấu ngoặc)",
+   "needs": [
+    "N1.08",
+    "N3.04"
+   ],
+   "shows_as": "20 + 10 × 2 = 60"
+  },
+  {
+   "id": "N3.07",
+   "grade": 3,
+   "gateway": true,
+   "name_vi": "Tìm thành phần chưa biết của phép tính",
+   "needs": [
+    "N2.04",
+    "N3.04"
+   ],
+   "shows_as": "? − 15 = 40 solved as 40 − 15; \"=\" read as \"the answer comes next\""
+  },
+  {
+   "id": "N3.08",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Bài toán hai bước; gấp, giảm một số lần; số lớn gấp mấy lần số bé",
+   "needs": [
+    "N2.07",
+    "N3.05"
+   ],
+   "shows_as": "\"gấp 3 lần\" (3 times as many) done by adding 3; stops after step one"
+  },
+  {
+   "id": "N3.09",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Làm quen phân số 1/2, 1/3, …, 1/9 (chia thành phần bằng nhau)",
+   "needs": [
+    "N2.05"
+   ],
+   "shows_as": "1/4 > 1/3 because 4 > 3; unequal parts called \"halves\""
+  },
+  {
+   "id": "H3.01",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Trung điểm; góc vuông, góc không vuông; đỉnh, cạnh, góc của hình chữ nhật, hình vuông; tâm, bán kính, đường kính; dùng êke, compa",
+   "needs": [
+    "H2.01"
+   ],
+   "shows_as": "diameter taken as the radius"
+  },
+  {
+   "id": "H3.02",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Đơn vị mm, g, ml, °C; chuyển đổi độ dài, khối lượng, dung tích",
+   "needs": [
+    "H2.02",
+    "H2.03",
+    "N3.04"
+   ],
+   "shows_as": "1 kg = 100 g; 2 m 5 cm = 25 cm"
+  },
+  {
+   "id": "H3.03",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Xem giờ đến từng phút; tháng trong năm; tính với thời gian và tiền",
+   "needs": [
+    "H2.05",
+    "N3.03"
+   ],
+   "shows_as": "1 h 50 min + 20 min = 1 h 70 min"
+  },
+  {
+   "id": "H3.04",
+   "grade": 3,
+   "gateway": true,
+   "name_vi": "Chu vi tam giác, tứ giác, hình chữ nhật, hình vuông",
+   "needs": [
+    "H2.04",
+    "N3.05"
+   ],
+   "shows_as": "adds only two sides of a rectangle"
+  },
+  {
+   "id": "H3.05",
+   "grade": 3,
+   "gateway": true,
+   "name_vi": "Diện tích: biểu tượng, cm²; diện tích hình chữ nhật, hình vuông",
+   "needs": [
+    "H3.04",
+    "N3.04"
+   ],
+   "shows_as": "area and perimeter swapped; area given in cm"
+  },
+  {
+   "id": "T3.01",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Thu thập, ghi chép số liệu; đọc, mô tả, nhận xét bảng số liệu",
+   "needs": [
+    "T2.01"
+   ],
+   "shows_as": "reads across the wrong row of a table"
+  },
+  {
+   "id": "T3.02",
+   "grade": 3,
+   "gateway": false,
+   "name_vi": "Khả năng xảy ra của một sự kiện khi làm thí nghiệm 1 lần",
+   "needs": [
+    "T2.02"
+   ],
+   "shows_as": "names only one possible result for a coin toss"
+  },
+  {
+   "id": "N4.01",
+   "grade": 4,
+   "gateway": true,
+   "name_vi": "Số có nhiều chữ số (đến lớp triệu): giá trị theo vị trí, số chẵn, số lẻ, so sánh, làm tròn đến trăm nghìn",
+   "needs": [
+    "N3.01",
+    "N3.02"
+   ],
+   "shows_as": "value of the 5 in 3 520 000 given as 5"
+  },
+  {
+   "id": "N4.02",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Cộng, trừ số có nhiều chữ số; tính chất giao hoán, kết hợp",
+   "needs": [
+    "N3.03",
+    "N4.01"
+   ],
+   "shows_as": "does not regroup to add 37 + 48 + 63 quickly"
+  },
+  {
+   "id": "N4.03",
+   "grade": 4,
+   "gateway": true,
+   "name_vi": "Nhân với số có hai chữ số; nhân, chia với (cho) 10, 100, 1000",
+   "needs": [
+    "N3.05",
+    "N4.01"
+   ],
+   "shows_as": "second partial product not shifted one place"
+  },
+  {
+   "id": "N4.04",
+   "grade": 4,
+   "gateway": true,
+   "name_vi": "Chia cho số có hai chữ số; ước lượng thương",
+   "needs": [
+    "N4.03",
+    "N3.05"
+   ],
+   "shows_as": "4 284 : 42 = 12 (zero missing); guesses a quotient digit too large"
+  },
+  {
+   "id": "N4.05",
+   "grade": 4,
+   "gateway": true,
+   "name_vi": "Tính chất phân phối của phép nhân đối với phép cộng; tính nhẩm, tính thuận tiện",
+   "needs": [
+    "N4.03"
+   ],
+   "shows_as": "25 × (4 + 8) = 25 × 4 + 8"
+  },
+  {
+   "id": "N4.06",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Biểu thức chứa một, hai, ba chữ: tính giá trị",
+   "needs": [
+    "N3.06"
+   ],
+   "shows_as": "with a = 3, writes 2 × a as 23"
+  },
+  {
+   "id": "N4.07",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Số trung bình cộng",
+   "needs": [
+    "N4.04"
+   ],
+   "shows_as": "divides by the wrong count; leaves out a zero value"
+  },
+  {
+   "id": "N4.08",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Bài toán 2–3 bước: tổng – hiệu, rút về đơn vị",
+   "needs": [
+    "N3.08",
+    "N4.07"
+   ],
+   "shows_as": "(sum − difference) : 2 taken as the larger number"
+  },
+  {
+   "id": "N4.09",
+   "grade": 4,
+   "gateway": true,
+   "name_vi": "Khái niệm phân số; tử số, mẫu số",
+   "needs": [
+    "N3.09"
+   ],
+   "shows_as": "numerator and denominator swapped; parts not equal"
+  },
+  {
+   "id": "N4.10",
+   "grade": 4,
+   "gateway": true,
+   "name_vi": "Tính chất cơ bản của phân số; rút gọn; quy đồng (một mẫu chia hết cho mẫu kia); so sánh",
+   "needs": [
+    "N4.09",
+    "N3.04"
+   ],
+   "shows_as": "multiplies only the denominator to make equal fractions"
+  },
+  {
+   "id": "N4.11",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Cộng, trừ phân số (cùng mẫu; một mẫu chia hết cho mẫu kia)",
+   "needs": [
+    "N4.10"
+   ],
+   "shows_as": "1/2 + 1/4 = 2/6"
+  },
+  {
+   "id": "N4.12",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Nhân, chia hai phân số; phân số của một số",
+   "needs": [
+    "N4.09",
+    "N4.03"
+   ],
+   "shows_as": "divides without inverting; 2/3 of 12 worked as 12 : 2 × 3"
+  },
+  {
+   "id": "H4.01",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Góc nhọn, góc tù, góc bẹt; đo góc bằng thước đo góc (độ)",
+   "needs": [
+    "H3.01"
+   ],
+   "shows_as": "reads 120° as 60° from the wrong scale; longer arms = bigger angle"
+  },
+  {
+   "id": "H4.02",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Hai đường thẳng vuông góc, song song; vẽ bằng thước và êke; hình bình hành, hình thoi",
+   "needs": [
+    "H3.01",
+    "H4.01"
+   ],
+   "shows_as": "draws a parallel line by eye"
+  },
+  {
+   "id": "H4.03",
+   "grade": 4,
+   "gateway": true,
+   "name_vi": "Đơn vị diện tích mm², dm², m² và chuyển đổi",
+   "needs": [
+    "H3.05",
+    "H3.02",
+    "N4.03"
+   ],
+   "shows_as": "1 m² = 10 dm² (factor 10, not 100)"
+  },
+  {
+   "id": "H4.04",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Yến, tạ, tấn; giây, thế kỉ; chuyển đổi và tính toán",
+   "needs": [
+    "H3.02",
+    "H3.03"
+   ],
+   "shows_as": "year 1890 put in the 18th century; 1 tạ = 10 kg"
+  },
+  {
+   "id": "T4.01",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Dãy số liệu; đọc, mô tả biểu đồ cột; xếp số liệu vào biểu đồ cột; giá trị trung bình",
+   "needs": [
+    "T3.01",
+    "N4.07"
+   ],
+   "shows_as": "reads a bar with the wrong step on the scale"
+  },
+  {
+   "id": "T4.02",
+   "grade": 4,
+   "gateway": false,
+   "name_vi": "Kiểm đếm số lần lặp lại của một khả năng xảy ra",
+   "needs": [
+    "T3.02"
+   ],
+   "shows_as": "tally count does not add up to the number of trials"
+  },
+  {
+   "id": "N5.01",
+   "grade": 5,
+   "gateway": true,
+   "name_vi": "Cộng, trừ phân số khác mẫu (mẫu chung là tích hai mẫu); phân số thập phân; hỗn số",
+   "needs": [
+    "N4.10",
+    "N4.11"
+   ],
+   "shows_as": "2 1/3 read as 2 × 1/3; adds numerators and denominators"
+  },
+  {
+   "id": "N5.02",
+   "grade": 5,
+   "gateway": true,
+   "name_vi": "Số thập phân: đọc, viết, hàng; viết số đo đại lượng bằng số thập phân",
+   "needs": [
+    "N5.01",
+    "N4.01"
+   ],
+   "shows_as": "3 m 5 cm = 3,5 m"
+  },
+  {
+   "id": "N5.03",
+   "grade": 5,
+   "gateway": true,
+   "name_vi": "So sánh, xếp thứ tự, làm tròn số thập phân",
+   "needs": [
+    "N5.02"
+   ],
+   "shows_as": "0,25 > 0,3 (longer is larger)"
+  },
+  {
+   "id": "N5.04",
+   "grade": 5,
+   "gateway": false,
+   "name_vi": "Cộng, trừ số thập phân",
+   "needs": [
+    "N5.02",
+    "N4.02"
+   ],
+   "shows_as": "lines up last digits, not commas: 3,5 + 1,25 = 1,60"
+  },
+  {
+   "id": "N5.05",
+   "grade": 5,
+   "gateway": true,
+   "name_vi": "Nhân, chia số thập phân; nhân, chia nhẩm với 10, 100, … và 0,1; 0,01; …",
+   "needs": [
+    "N5.04",
+    "N4.03",
+    "N4.04"
+   ],
+   "shows_as": "0,4 × 0,2 = 0,8; moves the comma the wrong way for × 0,1"
+  },
+  {
+   "id": "N5.06",
+   "grade": 5,
+   "gateway": true,
+   "name_vi": "Tỉ số; tỉ số phần trăm của hai số; giá trị phần trăm của một số",
+   "needs": [
+    "N5.05",
+    "N4.12"
+   ],
+   "shows_as": "25% of 80 worked as 80 : 25; \"27% of x is 5400\" solved as 27% of 5400"
+  },
+  {
+   "id": "N5.07",
+   "grade": 5,
+   "gateway": false,
+   "name_vi": "Tìm hai số khi biết tổng (hiệu) và tỉ số",
+   "needs": [
+    "N4.08",
+    "N5.06"
+   ],
+   "shows_as": "divides the sum by one term of the ratio, not by the total parts"
+  },
+  {
+   "id": "N5.08",
+   "grade": 5,
+   "gateway": false,
+   "name_vi": "Tỉ lệ bản đồ",
+   "needs": [
+    "N5.06",
+    "H3.02"
+   ],
+   "shows_as": "multiplies by the scale but leaves the answer in cm"
+  },
+  {
+   "id": "H5.01",
+   "grade": 5,
+   "gateway": false,
+   "name_vi": "Hình thang; tam giác nhọn, vuông, tù, đều; vẽ đường cao tam giác; vẽ đường tròn",
+   "needs": [
+    "H4.02",
+    "H3.01"
+   ],
+   "shows_as": "altitude of an obtuse triangle drawn inside it"
+  },
+  {
+   "id": "H5.02",
+   "grade": 5,
+   "gateway": true,
+   "name_vi": "Diện tích hình tam giác, hình thang",
+   "needs": [
+    "H5.01",
+    "H4.03",
+    "N5.05"
+   ],
+   "shows_as": "slanted side used as the height; forgets ÷ 2"
+  },
+  {
+   "id": "H5.03",
+   "grade": 5,
+   "gateway": false,
+   "name_vi": "Chu vi, diện tích hình tròn",
+   "needs": [
+    "H3.01",
+    "N5.05"
+   ],
+   "shows_as": "uses the diameter in r × r × 3,14; perimeter and area formulas swapped"
+  },
+  {
+   "id": "H5.04",
+   "grade": 5,
+   "gateway": true,
+   "name_vi": "Đơn vị km², ha; thể tích, cm³, dm³, m³ và chuyển đổi",
+   "needs": [
+    "H4.03"
+   ],
+   "shows_as": "1 m³ = 100 dm³"
+  },
+  {
+   "id": "H5.05",
+   "grade": 5,
+   "gateway": false,
+   "name_vi": "Diện tích xung quanh, diện tích toàn phần, thể tích hình hộp chữ nhật, hình lập phương; hình khai triển",
+   "needs": [
+    "H5.04",
+    "H3.05",
+    "N5.05"
+   ],
+   "shows_as": "lateral area includes the two bases; volume taken as sum of edges"
+  },
+  {
+   "id": "H5.06",
+   "grade": 5,
+   "gateway": true,
+   "name_vi": "Chuyển động đều: vận tốc, quãng đường, thời gian (km/h, m/s)",
+   "needs": [
+    "N5.05",
+    "H4.04"
+   ],
+   "shows_as": "t = s × v; 20 minutes used as 20, not 1/3 h"
+  },
+  {
+   "id": "T5.01",
+   "grade": 5,
+   "gateway": false,
+   "name_vi": "Biểu đồ hình quạt tròn: đọc, mô tả, xếp số liệu; chọn cách biểu diễn",
+   "needs": [
+    "T4.01",
+    "N5.06"
+   ],
+   "shows_as": "reads a sector's percent as a count; parts add to more than 100%"
+  },
+  {
+   "id": "T5.02",
+   "grade": 5,
+   "gateway": false,
+   "name_vi": "Tỉ số mô tả số lần xảy ra của một khả năng so với tổng số lần thí nghiệm",
+   "needs": [
+    "T4.02",
+    "N5.06"
+   ],
+   "shows_as": "2 heads in 5 tosses written as 2/3 (heads to tails)"
+  },
   {
    "id": "N6.01",
    "grade": 6,
@@ -194,7 +1006,7 @@
    "needs": [
     "N7.05"
    ],
-   "shows_as": "\\|−3\\| = −3"
+   "shows_as": "|−3| = −3"
   },
   {
    "id": "N7.07",
@@ -442,7 +1254,7 @@
    "id": "N9.02",
    "grade": 9,
    "gateway": false,
-   "name_vi": "Căn thức bậc hai: điều kiện xác định, √(A²) = \\|A\\|",
+   "name_vi": "Căn thức bậc hai: điều kiện xác định, √(A²) = |A|",
    "needs": [
     "N9.01",
     "N7.06"
@@ -590,6 +1402,690 @@
     "N6.07"
    ],
    "shows_as": "sign not reversed when dividing by a negative"
+  },
+  {
+   "id": "N10.01",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Mệnh đề, mệnh đề chứa biến; phủ định (cả ∀, ∃); kéo theo, đảo, tương đương; điều kiện cần, đủ",
+   "needs": [
+    "N9.15"
+   ],
+   "shows_as": "negates \"x > 5\" as \"x < 5\"; calls a converse true without a counter-example; \"a false statement is not a proposition\""
+  },
+  {
+   "id": "N10.02",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Tập hợp, tập con; hợp, giao, hiệu, phần bù; biểu đồ Ven; khoảng, đoạn trên trục số",
+   "needs": [
+    "N10.01",
+    "N9.15"
+   ],
+   "shows_as": "confuses ∈ and ⊂; open and closed ends swapped; counts the overlap twice"
+  },
+  {
+   "id": "N10.03",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Bất phương trình bậc nhất hai ẩn: biểu diễn miền nghiệm",
+   "needs": [
+    "N8.12",
+    "N9.15"
+   ],
+   "shows_as": "shades the wrong half-plane; test point taken on the line; strict and non-strict border drawn alike"
+  },
+  {
+   "id": "N10.04",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Hệ bất phương trình bậc nhất hai ẩn; giá trị lớn nhất, nhỏ nhất của F = ax + by trên miền đa giác",
+   "needs": [
+    "N10.03",
+    "N9.08"
+   ],
+   "shows_as": "leaves out a vertex of the polygon; checks points that are not vertices"
+  },
+  {
+   "id": "N10.05",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Hàm số: tập xác định, tập giá trị, đồng biến, nghịch biến, đọc đồ thị",
+   "needs": [
+    "N8.11",
+    "N8.08",
+    "N9.02"
+   ],
+   "shows_as": "domain ignores a root or a denominator; reads \"increasing\" from the y-values, not the direction"
+  },
+  {
+   "id": "N10.06",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Hàm số bậc hai: bảng giá trị, đỉnh, trục đối xứng, bảng biến thiên, vẽ parabol",
+   "needs": [
+    "N10.05",
+    "N9.10",
+    "N9.12"
+   ],
+   "shows_as": "vertex at x = b/2a; parabola opens up when a < 0"
+  },
+  {
+   "id": "N10.07",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Dấu của tam thức bậc hai",
+   "needs": [
+    "N10.06",
+    "N9.12"
+   ],
+   "shows_as": "sign pattern reversed when a < 0; Δ < 0 case said to have a sign change"
+  },
+  {
+   "id": "N10.08",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Bất phương trình bậc hai một ẩn",
+   "needs": [
+    "N10.07",
+    "N10.02"
+   ],
+   "shows_as": "gives only the roots, as for an equation; divides by x or by a negative without reversing"
+  },
+  {
+   "id": "N10.09",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Phương trình quy về bậc hai: √(ax² + bx + c) = √(dx² + ex + f); √(ax² + bx + c) = dx + e",
+   "needs": [
+    "N9.12",
+    "N9.02",
+    "N10.08"
+   ],
+   "shows_as": "squares both sides without the condition dx + e ≥ 0; keeps an extra root"
+  },
+  {
+   "id": "N10.10",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Quy tắc cộng, quy tắc nhân, sơ đồ hình cây",
+   "needs": [
+    "N6.01"
+   ],
+   "shows_as": "adds where the cases happen together; multiplies separate cases"
+  },
+  {
+   "id": "N10.11",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Hoán vị, chỉnh hợp, tổ hợp (cả máy tính cầm tay)",
+   "needs": [
+    "N10.10"
+   ],
+   "shows_as": "uses chỉnh hợp when order does not matter; counts the same group twice"
+  },
+  {
+   "id": "N10.12",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Nhị thức Newton với số mũ 4 hoặc 5",
+   "needs": [
+    "N10.11",
+    "N8.05",
+    "N7.04"
+   ],
+   "shows_as": "(a + b)⁴ written without the C(n, k) coefficients; sign of a negative second term lost"
+  },
+  {
+   "id": "H10.01",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Giá trị lượng giác của góc 0°–180°; góc bù, góc phụ; sin²α + cos²α = 1",
+   "needs": [
+    "N9.03"
+   ],
+   "shows_as": "cos of an obtuse angle taken as positive; cos α = √(1 − sin²α) whatever the angle"
+  },
+  {
+   "id": "H10.02",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Định lí côsin và hệ quả (tính góc từ ba cạnh)",
+   "needs": [
+    "H10.01",
+    "N9.03"
+   ],
+   "shows_as": "sign of −2bc·cos A kept negative when A is obtuse; drops the factor 2"
+  },
+  {
+   "id": "H10.03",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Định lí sin; bán kính đường tròn ngoại tiếp",
+   "needs": [
+    "H10.01",
+    "N9.03"
+   ],
+   "shows_as": "uses the sine rule when two sides and the included angle are given; pairs a side with the wrong angle"
+  },
+  {
+   "id": "H10.04",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Công thức diện tích tam giác (½bc·sin A, Heron, abc/4R, pr); giải tam giác và bài toán thực tế",
+   "needs": [
+    "H10.02",
+    "H10.03"
+   ],
+   "shows_as": "uses an angle that is not between the two sides; picks a formula without checking what is given"
+  },
+  {
+   "id": "H10.05",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Vectơ: bằng nhau, vectơ-không; tổng, hiệu (quy tắc ba điểm, hình bình hành); tích một số với vectơ; trung điểm, trọng tâm, thẳng hàng",
+   "needs": [],
+   "shows_as": "adds lengths, |AB + BC| = AB + BC; treats AB and BA as the same vector"
+  },
+  {
+   "id": "H10.06",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Tích vô hướng của hai vectơ",
+   "needs": [
+    "H10.05",
+    "H10.01"
+   ],
+   "shows_as": "angle between AB and BC taken as angle B; result written as a vector"
+  },
+  {
+   "id": "H10.07",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Toạ độ của vectơ; biểu thức toạ độ các phép toán; độ dài vectơ",
+   "needs": [
+    "H10.05",
+    "H10.06",
+    "N8.11"
+   ],
+   "shows_as": "AB = A − B instead of B − A; length without the square root"
+  },
+  {
+   "id": "H10.08",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Đường thẳng trong mặt phẳng toạ độ: phương trình tổng quát, tham số; vị trí tương đối; góc; khoảng cách từ điểm đến đường thẳng",
+   "needs": [
+    "H10.07",
+    "N8.12"
+   ],
+   "shows_as": "uses the normal vector as the direction vector; distance formula without the absolute value"
+  },
+  {
+   "id": "H10.09",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Đường tròn: phương trình, tâm và bán kính, tiếp tuyến tại một điểm; nhận biết phương trình chính tắc ba đường conic",
+   "needs": [
+    "H10.07",
+    "N8.05"
+   ],
+   "shows_as": "centre of (x + 2)² + … read as (2; …); R² taken as R"
+  },
+  {
+   "id": "T10.01",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Số gần đúng, sai số tuyệt đối, sai số tương đối, số quy tròn",
+   "needs": [
+    "N6.12"
+   ],
+   "shows_as": "rounds to the wrong digit for the given accuracy"
+  },
+  {
+   "id": "T10.02",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Số đặc trưng đo xu thế trung tâm, mẫu không ghép nhóm: trung bình, trung vị, tứ phân vị, mốt",
+   "needs": [
+    "N6.12"
+   ],
+   "shows_as": "median or quartiles taken without sorting the data"
+  },
+  {
+   "id": "T10.03",
+   "grade": 10,
+   "gateway": false,
+   "name_vi": "Số đặc trưng đo độ phân tán, mẫu không ghép nhóm: khoảng biến thiên, khoảng tứ phân vị, phương sai, độ lệch chuẩn",
+   "needs": [
+    "T10.02",
+    "N7.05"
+   ],
+   "shows_as": "gives the variance as the standard deviation; squares the wrong quantity"
+  },
+  {
+   "id": "T10.04",
+   "grade": 10,
+   "gateway": true,
+   "name_vi": "Xác suất cổ điển: phép thử, không gian mẫu, biến cố, biến cố đối; tính bằng tổ hợp, sơ đồ cây",
+   "needs": [
+    "N10.11",
+    "N10.02"
+   ],
+   "shows_as": "treats unequal outcomes as equally likely (sum 7 of two dice = 1/11); ordered count on top, unordered below"
+  },
+  {
+   "id": "N11.01",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Góc lượng giác, số đo (độ, radian), hệ thức Chasles, đường tròn lượng giác",
+   "needs": [
+    "H10.01"
+   ],
+   "shows_as": "mixes degrees and radians; calculator in the wrong mode; π used as 180 inside a number"
+  },
+  {
+   "id": "N11.02",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Giá trị lượng giác của góc lượng giác; hệ thức cơ bản; góc đối, bù, phụ, hơn kém π",
+   "needs": [
+    "N11.01",
+    "H10.01"
+   ],
+   "shows_as": "sign wrong outside the first quadrant; sin(−x) = sin x"
+  },
+  {
+   "id": "N11.03",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Công thức cộng, góc nhân đôi, biến đổi tích thành tổng và tổng thành tích",
+   "needs": [
+    "N11.02",
+    "N8.05"
+   ],
+   "shows_as": "sin(a + b) = sin a + sin b; sin 2x = 2 sin x"
+  },
+  {
+   "id": "N11.04",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Hàm số lượng giác: tập xác định, tập giá trị, chẵn lẻ, chu kì, đồ thị",
+   "needs": [
+    "N11.02",
+    "N10.05"
+   ],
+   "shows_as": "period of sin 2x given as 2π; tan defined at π/2"
+  },
+  {
+   "id": "N11.05",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Phương trình lượng giác cơ bản (sin x = m, cos x = m, tan x = m, cot x = m; dạng sin 2x = sin 3x)",
+   "needs": [
+    "N11.04",
+    "N11.03"
+   ],
+   "shows_as": "keeps one family of solutions and drops x = π − α + k2π; forgets k; solves sin x = 2"
+  },
+  {
+   "id": "N11.06",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Dãy số; cấp số cộng: số hạng tổng quát, tổng n số hạng",
+   "needs": [
+    "N7.09"
+   ],
+   "shows_as": "uₙ = u₁ + nd"
+  },
+  {
+   "id": "N11.07",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Cấp số nhân: số hạng tổng quát, tổng n số hạng",
+   "needs": [
+    "N11.06",
+    "N7.04"
+   ],
+   "shows_as": "ratio taken upside down; qⁿ in place of qⁿ⁻¹"
+  },
+  {
+   "id": "N11.08",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Giới hạn dãy số; phép toán giới hạn; tổng cấp số nhân lùi vô hạn",
+   "needs": [
+    "N11.07",
+    "N8.08"
+   ],
+   "shows_as": "∞/∞ = 1; ∞ − ∞ = 0; sums a series with |q| ≥ 1"
+  },
+  {
+   "id": "N11.09",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Giới hạn hàm số (hữu hạn, một phía, tại vô cực, vô cực); hàm số liên tục",
+   "needs": [
+    "N11.08",
+    "N8.07"
+   ],
+   "shows_as": "substitutes and stops at 0/0 instead of factoring; \"continuous\" read as \"defined at the point\""
+  },
+  {
+   "id": "N11.10",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Luỹ thừa với số mũ nguyên, hữu tỉ, thực; tính chất",
+   "needs": [
+    "N7.04",
+    "N9.01"
+   ],
+   "shows_as": "aˣ·aʸ = aˣʸ; a^(m/n) read as the n-th power of the m-th root, upside down; (a + b)ⁿ = aⁿ + bⁿ"
+  },
+  {
+   "id": "N11.11",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Lôgarit: định nghĩa, tính chất, đổi cơ số",
+   "needs": [
+    "N11.10"
+   ],
+   "shows_as": "log(a + b) = log a + log b; logₐb read as log a · b"
+  },
+  {
+   "id": "N11.12",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Hàm số mũ, hàm số lôgarit: đồ thị, tính chất",
+   "needs": [
+    "N11.11",
+    "N10.05"
+   ],
+   "shows_as": "thinks every exponential function increases, also for 0 < a < 1; log of a negative number allowed"
+  },
+  {
+   "id": "N11.13",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Phương trình, bất phương trình mũ và lôgarit dạng đơn giản",
+   "needs": [
+    "N11.12",
+    "N10.08"
+   ],
+   "shows_as": "does not reverse the inequality for a base below 1; no condition on the argument of log"
+  },
+  {
+   "id": "N11.14",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Đạo hàm: định nghĩa, ý nghĩa hình học, phương trình tiếp tuyến; số e",
+   "needs": [
+    "N11.09",
+    "N8.12"
+   ],
+   "shows_as": "uses f(x₀) as the tangent slope; tangent written through the wrong point"
+  },
+  {
+   "id": "N11.15",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Quy tắc tính đạo hàm: tổng, hiệu, tích, thương, hàm hợp; đạo hàm hàm sơ cấp; đạo hàm cấp hai",
+   "needs": [
+    "N11.14",
+    "N11.03",
+    "N11.11"
+   ],
+   "shows_as": "(uv)′ = u′v′; drops the inner derivative, (e²ˣ)′ = e²ˣ; (sin x)′ = −cos x"
+  },
+  {
+   "id": "H11.01",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Điểm, đường thẳng, mặt phẳng trong không gian; giao tuyến, giao điểm; hình chóp, tứ diện",
+   "needs": [],
+   "shows_as": "\"intersects\" two lines that are skew because they cross in the drawing"
+  },
+  {
+   "id": "H11.02",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Quan hệ song song (hai đường thẳng, đường thẳng và mặt phẳng, hai mặt phẳng); Thalès trong không gian; lăng trụ, hình hộp; phép chiếu song song, hình biểu diễn",
+   "needs": [
+    "H11.01"
+   ],
+   "shows_as": "reads parallel or perpendicular from the picture, not from the reasoning"
+  },
+  {
+   "id": "H11.03",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Quan hệ vuông góc: góc giữa hai đường thẳng; đường thẳng vuông góc với mặt phẳng; định lí ba đường vuông góc; phép chiếu vuông góc; hai mặt phẳng vuông góc",
+   "needs": [
+    "H11.02"
+   ],
+   "shows_as": "proves a line ⊥ plane from one line in the plane; angle of skew lines not moved to a common point"
+  },
+  {
+   "id": "H11.04",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Khoảng cách trong không gian (điểm–đường thẳng, điểm–mặt phẳng, hai đường thẳng chéo nhau dạng đơn giản)",
+   "needs": [
+    "H11.03",
+    "H10.02"
+   ],
+   "shows_as": "measures to a foot that is not perpendicular"
+  },
+  {
+   "id": "H11.05",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Góc giữa đường thẳng và mặt phẳng; góc nhị diện, góc phẳng nhị diện",
+   "needs": [
+    "H11.03",
+    "H10.01"
+   ],
+   "shows_as": "angle taken with a line in the plane, not with the projection"
+  },
+  {
+   "id": "H11.06",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Thể tích hình chóp, lăng trụ, hình hộp, chóp cụt đều",
+   "needs": [
+    "H11.03"
+   ],
+   "shows_as": "forgets the 1/3; uses a slant edge as the height"
+  },
+  {
+   "id": "T11.01",
+   "grade": 11,
+   "gateway": false,
+   "name_vi": "Số đặc trưng đo xu thế trung tâm, mẫu số liệu ghép nhóm",
+   "needs": [
+    "T10.02"
+   ],
+   "shows_as": "uses class limits in place of class midpoints; median formula read from the wrong class"
+  },
+  {
+   "id": "T11.02",
+   "grade": 11,
+   "gateway": true,
+   "name_vi": "Biến cố hợp, giao, độc lập; công thức cộng, công thức nhân (biến cố độc lập); sơ đồ cây",
+   "needs": [
+    "T10.04",
+    "N10.02"
+   ],
+   "shows_as": "P(A ∪ B) = P(A) + P(B) for events that overlap; \"independent\" read as \"cannot happen together\""
+  },
+  {
+   "id": "N12.01",
+   "grade": 12,
+   "gateway": true,
+   "name_vi": "Tính đơn điệu bằng dấu đạo hàm; bảng biến thiên",
+   "needs": [
+    "N11.15",
+    "N10.07"
+   ],
+   "shows_as": "sign row of f′ copied from f; any point with f′ = 0 treated as a turning point"
+  },
+  {
+   "id": "N12.02",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Cực trị: điểm cực trị, giá trị cực trị (bảng biến thiên, đồ thị)",
+   "needs": [
+    "N12.01"
+   ],
+   "shows_as": "f′(x₀) = 0 taken as enough (y = x³); confuses the extremum point x₀ with the value f(x₀)"
+  },
+  {
+   "id": "N12.03",
+   "grade": 12,
+   "gateway": true,
+   "name_vi": "Giá trị lớn nhất, nhỏ nhất của hàm số trên một đoạn hoặc tập",
+   "needs": [
+    "N12.02"
+   ],
+   "shows_as": "forgets the endpoints; keeps critical points outside the interval"
+  },
+  {
+   "id": "N12.04",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Đường tiệm cận ngang, đứng, xiên",
+   "needs": [
+    "N11.09"
+   ],
+   "shows_as": "vertical asymptote where the numerator is also zero"
+  },
+  {
+   "id": "N12.05",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Khảo sát và vẽ đồ thị: y = ax³ + bx² + cx + d; y = (ax + b)/(cx + d); y = (ax² + bx + c)/(mx + n); tâm, trục đối xứng",
+   "needs": [
+    "N12.01",
+    "N12.02",
+    "N12.04"
+   ],
+   "shows_as": "reads the graph of f′ as the graph of f"
+  },
+  {
+   "id": "N12.06",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Bài toán thực tiễn và tối ưu bằng đạo hàm",
+   "needs": [
+    "N12.03",
+    "N10.05"
+   ],
+   "shows_as": "no domain set for the variable; answers with x, not the quantity asked"
+  },
+  {
+   "id": "N12.07",
+   "grade": 12,
+   "gateway": true,
+   "name_vi": "Nguyên hàm: khái niệm, tính chất, bảng nguyên hàm hàm sơ cấp",
+   "needs": [
+    "N11.15"
+   ],
+   "shows_as": "drops + C; ∫x⁻¹dx by the power rule; ∫e²ˣdx = e²ˣ"
+  },
+  {
+   "id": "N12.08",
+   "grade": 12,
+   "gateway": true,
+   "name_vi": "Tích phân: định nghĩa, tính chất, tính trong trường hợp đơn giản",
+   "needs": [
+    "N12.07"
+   ],
+   "shows_as": "F(a) − F(b); ∫f·g = ∫f · ∫g"
+  },
+  {
+   "id": "N12.09",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Ứng dụng tích phân: diện tích hình phẳng, thể tích khối; bài toán thực tế",
+   "needs": [
+    "N12.08",
+    "H11.06"
+   ],
+   "shows_as": "area without the absolute value, a negative area; volume missing π or the square"
+  },
+  {
+   "id": "H12.01",
+   "grade": 12,
+   "gateway": true,
+   "name_vi": "Vectơ trong không gian; toạ độ của vectơ và điểm trong Oxyz; biểu thức toạ độ",
+   "needs": [
+    "H10.07",
+    "H11.01"
+   ],
+   "shows_as": "uses only two coordinates; same errors as H10.07 in three dimensions"
+  },
+  {
+   "id": "H12.02",
+   "grade": 12,
+   "gateway": true,
+   "name_vi": "Phương trình tổng quát của mặt phẳng (qua điểm và vectơ pháp tuyến; cặp vectơ chỉ phương; ba điểm); song song, vuông góc; khoảng cách từ điểm đến mặt phẳng",
+   "needs": [
+    "H12.01",
+    "H10.08"
+   ],
+   "shows_as": "uses a direction vector as the normal; distance formula without the absolute value"
+  },
+  {
+   "id": "H12.03",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Phương trình đường thẳng trong không gian (tham số, chính tắc); vị trí tương đối; góc giữa đường thẳng, mặt phẳng",
+   "needs": [
+    "H12.02"
+   ],
+   "shows_as": "calls two lines parallel because their direction vectors differ only in sign, without checking a point"
+  },
+  {
+   "id": "H12.04",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Phương trình mặt cầu: tâm, bán kính",
+   "needs": [
+    "H12.01",
+    "H10.09"
+   ],
+   "shows_as": "same centre-sign and R² errors as H10.09"
+  },
+  {
+   "id": "T12.01",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Số đặc trưng đo độ phân tán, mẫu số liệu ghép nhóm",
+   "needs": [
+    "T11.01",
+    "T10.03"
+   ],
+   "shows_as": "same as T10.03, with class midpoints dropped"
+  },
+  {
+   "id": "T12.02",
+   "grade": 12,
+   "gateway": true,
+   "name_vi": "Xác suất có điều kiện",
+   "needs": [
+    "T11.02"
+   ],
+   "shows_as": "P(A | B) read as P(B | A); P(A | B) = P(A ∩ B)"
+  },
+  {
+   "id": "T12.03",
+   "grade": 12,
+   "gateway": false,
+   "name_vi": "Công thức xác suất toàn phần, công thức Bayes (bảng 2×2, sơ đồ cây)",
+   "needs": [
+    "T12.02"
+   ],
+   "shows_as": "ignores the base rate; branches of the tree do not add to 1"
   }
  ]
 }

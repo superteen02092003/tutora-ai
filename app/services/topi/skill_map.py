@@ -1,4 +1,4 @@
-"""Bản đồ kỹ năng toán lớp 6–9 (sinh từ toptutor-main/01-background/maths-skill-map.md)."""
+"""Bản đồ kỹ năng toán lớp 1–12 (sinh từ toptutor-main/10-knowledge bằng tools/build_topi_skill_map.py)."""
 import json
 from functools import lru_cache
 from pathlib import Path
