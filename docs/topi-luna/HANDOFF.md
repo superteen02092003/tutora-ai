@@ -6,7 +6,8 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 - Luna v2 cùng band với Opus 70–72% (production v1 61%, Opus–Opus 96%), 6 buổi golden 3–8. Lỗ hổng buổi 3–4: recall 6/7 toán, 5/5 kỹ năng học; độ tin cậy lệch vì Luna tách kỹ năng.
 - r3–r4 (sửa homework_checked + criticism_person): 74% và 80%; hành vi 6 vẫn yếu (2–3/6).
 - r5–r8 (quy tắc đặt tên kỹ năng + sửa hành vi 6 hai bước): 78%, 76%, 78%, 82% so với Opus A (r8 so với Opus B 85%). Hành vi 6 thực ra bị **đếm thừa** self_correction (học sinh lặp lại lời sửa của gia sư); đã sửa bằng `_guard_self_corrections` + prompt; r7–r8 sửa thêm việc gán thiếu error_pointed. Lỗ hổng buổi 3–4 (r5–r6): recall toán 7/7, nhưng độ tin cậy chỉ khớp 2/7 (vẫn tách M3, L4 M1). **Chưa đạt ngưỡng nối pipeline.** Chi tiết: `03-eval.md`.
-- Ngưỡng để nối vào pipeline: ≥ 80% band, độ tin cậy lỗ hổng toán khớp ≥ 5/7.
+- **18/11, chuẩn mới:** bản "full model" của Michael (`07-gap-analyser/runs/2026-11-17_golden-lessons-5-4.md`) sửa bảng buổi 4 của stage 1 → độ tin cậy lỗ hổng toán buổi 3–4: r9 4/7, r10 6/7. Buổi 5: recall 6/6, độ tin cậy 3/6 và 4/6. Lỗi chính của Luna: lỗ hổng thừa (r10: 1 high ở buổi 4, 2 medium ở buổi 5). Hai cách chạy Opus (coding v2.1 + script và bảng gia sư của process 07) lệch nhau 4/8 hành vi mỗi buổi; code chấm hành vi 7 cho "below" khi không có dịp (sai so với `tutor-standard.md`). Chi tiết: `03-eval.md` §0.
+- Ngưỡng để nối vào pipeline: ≥ 80% band, độ tin cậy lỗ hổng toán khớp ≥ 5/7 (chuẩn: bản full model của process 07 cho buổi 4–5, stage 1 cho buổi 3).
 
 ## Dữ liệu (ngoài repo — có trích dẫn buổi học của trẻ vị thành niên, không commit)
 - Transcript + nhãn Opus coding v2.1 (run A2, B2) của 10 buổi golden: `C:\Users\lequo\AppData\Local\Temp\claude\ee31f2a9d98464c0\ed3519be-259c-4da8-a8a6-0aeaa55ede66\scratchpad\coding-v2\` (`transcripts/`, `runA2/`, `runB2/`). Nếu mất: lấy transcript bằng connector `toptutor` → `get_transcript`; nhãn Opus phải chạy lại theo `toptutor-main/60-output/01-prompts/lesson-coding-v2.md`.
@@ -21,6 +22,7 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 
 ## Việc tiếp
 1. (Đã xong r5–r10; dữ liệu trong cùng thư mục chấm.) r9–r10 gộp lỗ hổng theo `error_pattern` (model ghi kiểu lỗi, code gộp): band 85%/80%, độ tin cậy toán 3/7 và 5/7 — r10 đạt cả hai ngưỡng, r9 chưa. Tiếp: cho lượt attempts dùng lại đúng chữ của kiểu lỗi đã gặp; câu "lỗi này con còn lặp lại" nâng độ tin cậy; hoặc Khanh chấm tay r10. Lần chạy mới dùng `--start 11`.
+1b. Từ đối chiếu 18/11 (`03-eval.md` §0.5): sửa hành vi 7 (không có dịp → bỏ khỏi điểm) và chọn một bộ ngưỡng band; chặn lỗ hổng thừa bằng code (lần làm dùng lại kết quả đã sửa hoặc trả lời câu dẫn dắt); Michael + Khanh chọn chuẩn Opus (coding v2.1 hay process 07); thêm state, award, khuyến nghị, "điều làm tốt / điều nên thử", dữ kiện cho process 08 vào schema v2.
 2. Nếu đạt ngưỡng: nối v2 vào `pipeline.py` sau một setting, sửa `topi-api-contract.md` trước; nhánh/PR riêng.
 3. Cho plan và tips dùng đầu ra v2 (trích dẫn Sai/Đúng từ `attempts`; tips theo band thấp nhất; xưng "bạn"/"con" theo audit S4).
 4. Không push lên main, không deploy, không ghi DB production. Tài liệu cho Michael viết tiếng Anh; không ghi tên học sinh (D3).

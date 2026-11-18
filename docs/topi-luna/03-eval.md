@@ -1,10 +1,73 @@
-# Luna (analysis v2) against Claude Opus — comparison, 2026-11-17 (r1–r10)
+# Luna (analysis v2) against Claude Opus — comparison, 2026-11-17 (r1–r10), benchmark updated 2026-11-18
+
+**Update 2026-11-18 — against Michael's full-model run (process 07, lessons 5 and 4, 2026-11-17), which corrects the stage-1 lesson-4 gaps: maths-gap confidence, lessons 3–4, agrees on 4/7 (r9) and 6/7 (r10), not 3/7 and 5/7. Lesson 5, new: recall 6/6, confidence 3/6 and 4/6. Main Luna fault: extra gaps (r10: one high in lesson 4, two medium in lesson 5) on attempts Opus lists as shown correct or as no evidence. The two Opus methods (coding v2.1 + script, and process 07's own tutor table) disagree on 4 of 8 behaviours a lesson, so the band numbers below measure agreement with one method, not truth.** See §0.
 
 **Latest (r9–r10, gaps merged by error pattern): band agreement with Opus A 85% and 80% (mean 82%). Maths-gap confidence agrees on 3/7 and 5/7 (was 2/7). r10 meets both wiring thresholds, r9 only the band one; the merge works when Luna writes the same `error_pattern` for a repeated mistake, and it does not always.**
 
 **Latest (r5–r8): band agreement with Opus A 76–82% (mean 78%; r8 against Opus B 85%). Target ≥ 85% not reached. Behaviour 6 diagnosed and fixed in two steps (r5–r6, r7–r8); it is now limited by noise near the band thresholds, not by a labelling bias. Gaps, lessons 3–4: the skill-naming rule lifts maths recall to 7/7 but confidence still agrees on only 2/7 (threshold 5/7).** Details in §1–§2 and Next; the first-comparison text (r1–r4) is kept below it.
 
 **Tutor standard: Luna v2 lands in the same band as Opus in 70–72% of behaviour-lessons (production v1: 57–61%; Opus against itself: 96%). Gaps, lessons 3–4: Luna finds 6 of the 7 Opus maths gaps and 4 of the 5 learning-skill gaps, but splits one Opus skill into several narrow ones, so its confidence comes out lower.** Not accuracy: Opus is the benchmark, the human hand check has not been done (golden-set step 5).
+
+## 0. Against the full-model benchmark (2026-11-18)
+
+Sources (toptutor-main, `origin/main`): `40-processes/07-gap-analyser/runs/2026-11-17_golden-lessons-5-4.md` (full model: confidence, state, award, recommendations, tutor table, one pass) and `scoring-model.md`. Luna runs r9–r10 (gaps merged by error pattern). Judged by hand, same rules as §2.
+
+### 0.1 Lesson 4 (`b8f9fb8c`): the benchmark changed
+
+The full-model run corrects its own stage-1 reading of lesson 4:
+
+| Lesson-4 gap | Stage 1 (used in §2) | Full model | Luna r9 | Luna r10 |
+|---|---|---|---|---|
+| Interval brackets (N10.02) | high | high | medium (lowered by a doubt) ✗ | **high** ✓ |
+| Negating ∀/∃ (N10.01) | high | **low (watch)**: one slip; the other evidence is the tutor's remark about an earlier lesson | low ✓ | low ✓ |
+| No self-check before handing in | medium | **high**: three slips on different problems | low ✗ | low ✗ |
+| Drops a known rule under test | low | **medium** | low ✗ | **medium** ✓ |
+| Inequality in two variables (N10.03) | not a gap | **shown correct** (the tutor computed the line's points) | not a gap ✓ | **extra high gap** ✗ |
+
+With the corrected lesson 4, maths-gap confidence for lessons 3–4 agrees on **4/7 (r9) and 6/7 (r10)**. The wiring threshold (≥ 5/7) holds for r10, but r10 also has the extra high gap, which would reach a parent.
+
+### 0.2 Lesson 5 (`3d497118`), first gap comparison
+
+| Opus gap (full model) | Luna r9 | Luna r10 |
+|---|---|---|
+| L1 no self-check (signs), high | medium ✗ | **high** ✓ |
+| M1 N10.01 proposition or open sentence, medium | **medium** ✓ | **medium** ✓ |
+| M2 N8.05 (a + b)², medium (the tutor applied the identity) | low, slip ✗ | low, slip ✗ |
+| M3 N7.03 bracket after a minus, low (slip) | medium ✗ (named "moving terms") | medium ✗ |
+| M4 N9.15 reversing the inequality, low | **low** ✓ | **low** ✓ |
+| M5 N8.07 factorising, low | medium ✗ | **low** ✓ |
+| M6 N10.01 judging a "for all" claim, low (lowered by a doubt) | **low** ✓ | **low** ✓ |
+
+- **Recall:** maths 6/6 in both runs. **Confidence:** 3/6 (r9), 4/6 (r10).
+- **Extra gaps:** r9 two low rows on attempts Opus excludes as no evidence (1745 reuses the corrected factors; 2970 a substitution the tutor set up). r10 **two medium rows** on proposition items (3057, 3232) that Opus lists as shown correct. Plus one extra habit each (answers before thinking, drops a rule).
+- **Cause:** the attempts prompt already says that an answer to a leading question, or a result the tutor states, is no evidence, but Luna still counts reused and tutor-led answers.
+
+### 0.3 Tutor table: two Opus methods
+
+Process 07 writes its own tutor table (holistic, with evidence) in the same pass. Against coding v2.1 + script (Opus A, used in §1):
+
+| | Lesson 5 | Lesson 4 |
+|---|---|---|
+| Opus 07 vs Opus A differ on | 1, 2, 7, 10 | 2, 5, 6, 10 |
+| Luna r9 / r10 = Opus A | 9/9 · 7/9 | 8/9 · 8/9 |
+| Luna r9 / r10 = Opus 07 | 5/8 · 3/8 (7: no occasion) | 5/9 · 5/9 |
+
+- **Behaviour 7, scoring bug:** lesson 5 is the tutor's first lesson with this pupil. `tutor-standard.md` drops a behaviour with no occasion from the score; `analysis.tutor_behaviours` (and so Opus A and Luna) score it "below".
+- **Behaviour 6, lesson 4:** Opus 07 finds 3 of 3 errors fixed by the pupil once pointed at (met); Luna r9–r10 say met; Opus A says near.
+- **Behaviours 5 and 10:** Opus 07 counts unprompted explaining and check prompts after an error; coding v2.1 counts only an `explain_prompt` / `chance`.
+- **Bands:** the code mixes the two tables of `tutor-standard.md`: behaviours 1 and 2 use the reference (evidence) bands, 5, 6 and 10 the draft bands; `golden-set-v2.md` says the reference bands.
+- So Opus A against Opus B (96%) is the stability of one method, not accuracy. Which Opus method is the yardstick is a decision for Michael and Khanh.
+
+### 0.4 What Luna v2 does not output yet
+
+The full model (one pass, decision of 2026-11-17) also gives, per gap row, the **state** across sessions, the **award**, a **recommendation** to the tutor (and to the parent on high rows); per lesson, **one thing done well and one to try** (with Vietnamese), and the facts process 08 needs (**homework set, quiz result, what the lesson covered**). Luna v2 gives gaps, confidence and tutor bands only. These are needed before Luna can replace Opus in the 07 → 08 chain.
+
+### 0.5 Next, from this comparison
+
+1. Fix behaviour 7: no homework set last time, or first lesson with the pupil → no occasion, left out of the count. Pick one band table.
+2. Stop extra gaps in code: drop attempts that reuse a result already corrected or answer a leading question (needs a field from the attempts pass, e.g. `tutor_led`).
+3. Decide the yardstick (coding v2.1 + script, or process 07), then re-score r1–r10 against it.
+4. Add the missing outputs (§0.4) to the v2 schema.
 
 ## Set-up
 
