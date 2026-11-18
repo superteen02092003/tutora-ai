@@ -71,6 +71,8 @@ def agreement(folder: Path, ids: list[str], a: str, b: str) -> dict:
         if not ba or not bb:
             continue
         for k in BEHAVIOURS:
+            if ba[k] is None or bb[k] is None:  # no occasion on either side: the cell drops out
+                continue
             per_b[k][1] += 1
             per_b[k][0] += ba[k] == bb[k]
     tot = [sum(v[0] for v in per_b.values()), sum(v[1] for v in per_b.values())]

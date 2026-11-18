@@ -74,3 +74,13 @@ def test_same_error_pattern_in_two_topics_merges_into_one_high_gap():
     g = analysis.gaps({"exercises": [], "attempts": [a1, a2, a3, a4], "habits": [], "doubts": []})
     rows = [(m["skill"], m["confidence"], m["slip"]) for m in g["maths"]]
     assert rows == [("giao hai khoảng", "high", False), ("mệnh đề đảo", "medium", False)]
+
+
+def test_homework_with_no_occasion_drops_out_and_not_evidence_attempts_are_left_out():
+    segs = [{"start": 0, "speaker": "tutor", "text": "hôm nay buổi đầu"}, {"start": 60, "speaker": "student", "text": "x bằng hai"}]
+    ev = {"blocks": [], "ack_segments": [], "exercises": [], "tutor_events": [], "pupil_events": []}
+    assert analysis.tutor_behaviours(ev, segs)["bands"]["7"] == "below"
+    assert analysis.tutor_behaviours(dict(ev, homework_occasion="no"), segs)["bands"]["7"] is None
+    raw = {"attempts": [dict(_att(1, "wrong", "X1"), quote="x bằng hai", not_evidence="reuses_earlier_result")]}
+    out = analysis.check(raw, segs)
+    assert out["attempts"] == [] and out["check"]["attempts_not_evidence"] == 1

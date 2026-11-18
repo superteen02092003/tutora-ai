@@ -53,6 +53,8 @@ Types (one event per moment; a segment may carry two events):
 "how" is "" except for homework_checked; "skill" is "" except for chance.
 
 "flags": tutor_math_error_uncorrected (the tutor states a wrong maths result and it stays) or criticism_person, each {type, seg, quote}.
+
+"homework_occasion": was there homework from an earlier lesson to check? "no" when the transcript shows there was none: it is the tutor's first lesson with this pupil ("Hôm nay là buổi đầu tiên cô dạy con" — "today is my first lesson with you"), or the tutor says nothing was set last time. "yes" when the transcript mentions homework or a task from last time. Else "unknown".
 """
 
 # ---------------------------------------------------------------- pass 3a
@@ -68,8 +70,10 @@ JOB: the pupil's attempts, for finding gaps. You label; code decides what is a g
      * after_hint: correct, but only after help. HELP COUNTS AS A HINT: a pointed question ("có dấu bằng không?" — "is there an equals sign?", "Chắc chưa?" — "Sure?"), a supplied number or case ("thử x bằng 0 xem" — "try x = 0"), "nghĩ lại" / "xem lại" ("think again" / "look again"), a named wrong step.
      * wrong: incorrect (also: "không biết" — "don't know").
      * not_finished: started, did not reach an answer.
+   - HINT ON ANOTHER STEP: when the tutor does one step for the pupil (computes the two points of a line) and the pupil then does a DIFFERENT step alone (chooses the side, the solid or dashed line), label the pupil's own step: alone if right.
    - NOT AN ATTEMPT (leave out): an answer to a leading question whose answer is in the question ("…đúng không con?" — "…right?" answered "dạ đúng" — "yes, right"); a result only the tutor states; "dạ" alone.
    - fixed_alone_after_pointing: true when this attempt is wrong and the pupil's NEXT attempt on the same exercise is correct after the tutor only pointed at the error (no step given).
+   - not_evidence: "" for a real attempt. Otherwise why it is no evidence, and code will leave it out: leading_question (the answer is in the tutor's question); tutor_led (the tutor set up every step and the pupil only fills in a value or repeats); reuses_earlier_result (the pupil reuses a result already corrected or given earlier, e.g. the corrected factors of an earlier item). When unsure, "".
    - skill: the maths RULE this attempt tests, 3–8 Vietnamese words. Name the rule, not the exercise, and use the SAME words for every attempt that tests that rule, across all exercises and blocks (homework, quiz, new topic). Example: solving 2x − 4 = 0 in homework, 3x + 1 = 7 in a quiz and moving terms in x² − 5x = −6 all test "chuyển vế đổi dấu" ("moving a term across the equals sign changes its sign"); finding y' of x³, of 1/x and of √x all test "đạo hàm hàm cơ bản" ("derivatives of basic functions"). Before you output, merge skills that differ only in wording.
    - skill_node: one id from the node list, "" if none fits.
    - what_went_wrong: for wrong / after_hint / not_finished, one short English line saying the error ("misses the equals case when negating >"); "" for alone.

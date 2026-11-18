@@ -55,11 +55,13 @@ TUTOR_SCHEMA = _obj({
         "praise_person", "criticism_person", "chance"), "exercise_id": S, "skill": _enum("", *SKILLS),
         "how": _enum("", "pupil_fixes", "marked_only")})),
     "flags": _arr(_obj({"type": _enum("tutor_math_error_uncorrected", "criticism_person"), "seg": I, "quote": S})),
+    "homework_occasion": _enum("yes", "no", "unknown"),
 })
 ATTEMPTS_SCHEMA = _obj({
     "attempts": _arr(_obj({"exercise_id": S, "seg": I, "quote": S, "hint_seg": NI, "hint_quote": S,
                            "label": _enum("alone", "after_hint", "wrong", "not_finished"),
                            "fixed_alone_after_pointing": B, "skill": S, "skill_node": S, "what_went_wrong": S,
+                           "not_evidence": _enum("", "leading_question", "tutor_led", "reuses_earlier_result"),
                            "error_pattern": S})),
     "habits": _arr(_obj({"seg": I, "quote": S, "speaker": _enum("pupil", "tutor"),
                          "habit": _enum("answers_before_thinking", "no_self_check", "no_written_working",
@@ -119,6 +121,8 @@ def check(raw: dict[str, Any], segments: list[dict[str, Any]]) -> dict[str, Any]
         out[key], dropped = kept, dropped + drop
     kept, drop, _ = check_labels(raw.get("attempts") or [], segments, kind="attempts", expected_speaker="student")
     dropped += drop
+    no_ev = [a for a in kept if a.get("not_evidence")]  # process 07 step 4: no evidence, not counted
+    kept = [a for a in kept if not a.get("not_evidence")]
     for a in kept:
         if a.get("hint_quote"):
             h, _, _ = check_labels([{"seg": a.get("hint_seg"), "quote": a["hint_quote"]}], segments,
@@ -132,7 +136,8 @@ def check(raw: dict[str, Any], segments: list[dict[str, Any]]) -> dict[str, Any]
     out["ack_segments"] = [i for i in raw.get("ack_segments") or []
                            if isinstance(i, int) and 0 <= i < n and segments[i].get("speaker") == "student"]
     out["pupil_events"], relabelled = _guard_self_corrections(out["pupil_events"], out["tutor_events"])
-    out["check"] = {"dropped": dropped, "dropped_n": len(dropped), "self_correction_relabelled": relabelled}
+    out["check"] = {"dropped": dropped, "dropped_n": len(dropped), "self_correction_relabelled": relabelled,
+                    "attempts_not_evidence": len(no_ev)}
     return out
 
 
@@ -337,7 +342,9 @@ def tutor_behaviours(ev: dict[str, Any], segments: list[dict[str, Any]]) -> dict
         "1": _band(talk, 0.40, 0.25), "2": _band(tries, 0.70, 0.35), "3": None,
         "4": "met" if tells <= 5 and opens >= 10 else ("near" if tells <= 5 or opens >= 10 else "below"),
         "5": _band(values["5_explains"], 0.5, 0.25), "6": _band(values["6_errors_found"], 0.6, 0.3),
-        "7": ("met" if any(e.get("how") == "pupil_fixes" for e in hw) else "near") if hw else "below",
+        # no occasion (first lesson with the pupil, or nothing set last time) drops out (tutor-standard.md)
+        "7": ("met" if any(e.get("how") == "pupil_fixes" for e in hw) else "near") if hw
+        else (None if ev.get("homework_occasion") == "no" else "below"),
         "8": "met" if cnt("wrapup_by_pupil_prompt") else ("near" if cnt("wrapup_by_tutor") else "below"),
         "9": "below" if cnt("criticism_person") else ("met" if cnt("praise_process") else "near"),
         "10": _band(values["10_chances"], 0.5, 0.25),

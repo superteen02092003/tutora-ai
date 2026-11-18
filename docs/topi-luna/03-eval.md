@@ -2,6 +2,8 @@
 
 **Update 2026-11-18 — against Michael's full-model run (process 07, lessons 5 and 4, 2026-11-17), which corrects the stage-1 lesson-4 gaps: maths-gap confidence, lessons 3–4, agrees on 4/7 (r9) and 6/7 (r10), not 3/7 and 5/7. Lesson 5, new: recall 6/6, confidence 3/6 and 4/6. Main Luna fault: extra gaps (r10: one high in lesson 4, two medium in lesson 5) on attempts Opus lists as shown correct or as no evidence. The two Opus methods (coding v2.1 + script, and process 07's own tutor table) disagree on 4 of 8 behaviours a lesson, so the band numbers below measure agreement with one method, not truth.** See §0.
 
+**r11–r12 (2026-11-18, behaviour-7 fix + no-evidence attempts left out): band agreement with Opus A 89% and 81% (53 cells; mean 85%). No high or medium extra gap in r11, one medium in r12 (r10: one high, two medium). Maths-gap confidence, lessons 3–5: 8/13 in both (r10: 10/13). Not stable enough to wire in: confidence and the learning-habit rows still swing between runs.** See §0.6.
+
 **Latest (r9–r10, gaps merged by error pattern): band agreement with Opus A 85% and 80% (mean 82%). Maths-gap confidence agrees on 3/7 and 5/7 (was 2/7). r10 meets both wiring thresholds, r9 only the band one; the merge works when Luna writes the same `error_pattern` for a repeated mistake, and it does not always.**
 
 **Latest (r5–r8): band agreement with Opus A 76–82% (mean 78%; r8 against Opus B 85%). Target ≥ 85% not reached. Behaviour 6 diagnosed and fixed in two steps (r5–r6, r7–r8); it is now limited by noise near the band thresholds, not by a labelling bias. Gaps, lessons 3–4: the skill-naming rule lifts maths recall to 7/7 but confidence still agrees on only 2/7 (threshold 5/7).** Details in §1–§2 and Next; the first-comparison text (r1–r4) is kept below it.
@@ -64,10 +66,45 @@ The full model (one pass, decision of 2026-11-17) also gives, per gap row, the *
 
 ### 0.5 Next, from this comparison
 
-1. Fix behaviour 7: no homework set last time, or first lesson with the pupil → no occasion, left out of the count. Pick one band table.
-2. Stop extra gaps in code: drop attempts that reuse a result already corrected or answer a leading question (needs a field from the attempts pass, e.g. `tutor_led`).
+1. ~~Fix behaviour 7~~ done in r11–r12 (§0.6). Still open: pick one band table.
+2. ~~Stop extra gaps in code~~ done in r11–r12 (`not_evidence`, §0.6). Next: stabilise the slip decision (`fixed_alone_after_pointing`), e.g. derive it in code from the next attempt and the hint type instead of asking the model.
 3. Decide the yardstick (coding v2.1 + script, or process 07), then re-score r1–r10 against it.
 4. Add the missing outputs (§0.4) to the v2 schema.
+
+### 0.6 r11–r12: the two fixes (2026-11-18)
+
+**Changes.**
+- **Behaviour 7:** the tutor pass outputs `homework_occasion` (yes · no · unknown). "No" (first lesson with the pupil, nothing set last time) makes the band `None`, and the eval drops a cell when either side is `None` (54 → 53 cells: lesson 5). Opus A still scores lesson 5 "below" under the old rule; that cell is the one dropped.
+- **Extra gaps:** each attempt carries `not_evidence` (leading_question · tutor_led · reuses_earlier_result); `check()` leaves those attempts out (process 07 step 4). The attempts prompt also says that a hint on another step (the tutor computes the line's points) does not make the pupil's own step (choosing the side) "after hint".
+
+**Behaviour 7:** both runs set `homework_occasion = no` for lesson 5 (the tutor's first lesson with the pupil) and `yes` for the other five. Behaviour 7 now agrees 4/5 and 5/5.
+
+**Tutor standard, against Opus A (53 cells):**
+
+| Run | Same band | 1 | 2 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Luna v2 r11 | **47/53 (89%)** | 5 | 6 | 6 | 6 | 4 | 4/5 | 5 | 6 | 5 |
+| Luna v2 r12 | 43/53 (81%) | 5 | 6 | 4 | 6 | 2 | 5/5 | 5 | 5 | 5 |
+| r11 vs r12 (stability) | 43/53 (81%) | 6 | 6 | 4 | 6 | 2 | 4/5 | 6 | 5 | 4 |
+
+Against Opus B: 45/53 (85%) and 41/53 (77%). Behaviours 4 and 6 still carry most of the run-to-run swing.
+
+**Gaps, against the full-model benchmark (lesson 3: stage 1; lessons 4–5: full model):**
+
+| | r9 | r10 | r11 | r12 |
+|---|---|---|---|---|
+| Maths confidence, lessons 3–4 (of 7) | 4 | 6 | 5 | 4 |
+| Maths confidence, lesson 5 (of 6) | 3 | 4 | 3 | 4 |
+| Maths recall, lessons 3–5 (of 13) | 13 | 13 | 13 | 13 |
+| Extra gaps at medium or high | 0 | 3 (1 high) | **0** | 1 |
+| Lesson-4 "no self-check" (Opus high) | low | low | low | low |
+| Lesson-5 "no self-check" (Opus high) | medium | high | **missed** | high |
+
+- **Fixed:** the lesson-4 extra high gap (inequality in two variables) is gone in both runs; lesson 5's (a + b)² is now medium, as in Opus (the tutor-led re-expansion at 1382 is left out). Luna marked 1–8 attempts per lesson as no evidence.
+- **Still wrong:** lesson 3's M3 merges in r11 (high) but splits in r12 (three medium rows); M2 and M5 come out medium (Opus high and low). Lesson 5's slips (bracket after a minus, reversing the sign, factorising) come out medium in r11, which also loses the slip-fed "no self-check" habit. Lesson 4's "no self-check" stays low in every run: Luna marks only one slip there (1643), while Opus reads the two bracket errors as slips too.
+- **Extra gaps left:** r12 one medium row on lesson 5 (3057, which Opus lists as shown correct); low "watch" rows on 3232 in lesson 5 in both runs.
+
+**Reading:** the two fixes did what they were meant to (behaviour 7 right in every run; extra gaps at medium or high down to 0–1). Maths-gap confidence did not improve (8/13 in both, against 7/13 and 10/13 for r9–r10): it depends on the slip decision (`fixed_alone_after_pointing`), which swings between runs and feeds both the maths rows and the "no self-check" habit. That flag is the next target.
 
 ## Set-up
 
