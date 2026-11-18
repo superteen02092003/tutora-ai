@@ -99,6 +99,26 @@ def test_no_homework_means_fixed_sentence(monkeypatch):
     assert out.report["homework"]["text"] == "Không có bài tập về nhà."
 
 
+def test_rank_gaps_only_skills_with_evidence_of_a_gap():
+    # Buổi 28/10: kỹ năng ôn lớp 3–8 ở mức improving vì luật buổi đầu, chưa sai lần nào.
+    states = [
+        {"node": "N4.10", "level": "improving", "observations": [{"lesson_date": "2026-10-05", "outcome": "alone"}]},
+        {"node": "N6.05", "level": "to_do", "observations": [{"lesson_date": "2026-10-26", "outcome": "wrong"}]},
+        {"node": "N9.15", "level": "improving", "observations": [{"lesson_date": "2026-10-21", "outcome": "wrong"}]},
+        {"node": "N10.01", "level": "standard", "observations": []},
+    ]
+    ev = {"pupil_events": [{"type": "error", "skill_node": "H10.01", "quote": "q", "seg": 3}]}
+    nodes = {r["node"] for r in plan.rank_gaps(ev, states)}
+    assert nodes == {"H10.01", "N6.05", "N9.15"}
+
+
+def test_rank_gaps_drops_a_skill_raised_this_lesson():
+    states = [{"node": "N10.04", "level": "improving",
+               "observations": [{"lesson_date": "2026-10-26", "outcome": "wrong"}]}]
+    assert [r["node"] for r in plan.rank_gaps({}, states)] == ["N10.04"]
+    assert plan.rank_gaps({}, states, {"N10.04"}) == []
+
+
 def test_rank_gaps_basics_first():
     ev = {"pupil_events": [
         {"type": "error", "skill_node": "N7.12", "quote": "q", "seg": 1},   # needs N7.03

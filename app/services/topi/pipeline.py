@@ -24,13 +24,24 @@ async def run(client, req: TopiRunRequest, *, evidence_model: str, write_model: 
     resp.evidence = ev
 
     states = [s.model_dump() for s in req.skill_states]
+    # Kỹ năng là code thuần, tính trước để kế hoạch bỏ nút vừa lên mức ở buổi này.
+    skills, skills_error = None, None
+    if "skills" in req.outputs:
+        try:
+            skills = levels.apply(ev, states, req.lesson_date)
+        except Exception as e:  # pragma: no cover - code thuần, chỉ phòng hờ
+            skills_error = f"{type(e).__name__}: {e}"
+    # Chỉ nút vừa lên standard/mastered thôi là lỗ hổng; to_do -> improving vẫn còn.
+    raised = frozenset(c["node"] for c in (skills or {}).get("proposed_changes", [])
+                       if c.get("to") in ("standard", "mastered"))
     tasks: dict[str, Any] = {}
     if "report" in req.outputs:
         tasks["report"] = report_mod.write(client, model=write_model, evidence=ev,
                                            duration_sec=req.duration_sec, booked_min=req.booked_min)
     if "plan" in req.outputs:
         tasks["plan"] = plan_mod.build(client, model=write_model, evidence=ev, states=states, grade=req.grade,
-                                       last_homework=req.last_homework.quote if req.last_homework else None)
+                                       last_homework=req.last_homework.quote if req.last_homework else None,
+                                       raised=raised)
     if "tips" in req.outputs:
         tasks["tips"] = tips_mod.write(client, model=write_model, evidence=ev, segments=segments)
     results = await asyncio.gather(*tasks.values(), return_exceptions=True)
@@ -40,9 +51,8 @@ async def run(client, req: TopiRunRequest, *, evidence_model: str, write_model: 
             resp.errors[name] = f"{type(result).__name__}: {str(result)[:200]}"
         else:
             setattr(resp, name, result)
-    if "skills" in req.outputs:
-        try:
-            resp.skills = levels.apply(ev, states, req.lesson_date)
-        except Exception as e:  # pragma: no cover - code thuần, chỉ phòng hờ
-            resp.errors["skills"] = f"{type(e).__name__}: {e}"
+    if skills is not None:
+        resp.skills = skills
+    if skills_error:
+        resp.errors["skills"] = skills_error
     return resp
