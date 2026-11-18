@@ -152,6 +152,29 @@ Against Opus B: 43/53 (81%) for both votes. Single runs r11–r16 against Opus A
 
 **Reading:** the vote does what it is for — the band result no longer depends on the run (85% twice, 87% between votes) and extra gaps at medium or high are gone. Maths-gap confidence stays at 7–8 of 13 against this benchmark; about half of the remaining misses are rows where the stage-1 lesson-3 table does not follow the scoring model Luna's code implements. A full-model run of lesson 3 (and 6–10) by process 07 would give a consistent benchmark.
 
+### 0.8 One benchmark for lessons 3–8: process 07 full model (2026-11-18)
+
+Process 07 (full model, steps 3–9 of PROCESS.md with scoring-model.md) was run by Claude Opus subagents on lessons 3, 6, 7 and 8 — one fresh subagent per lesson, reading only the anonymised transcript and the process files (no Luna output). Records: `<data>/opus07/<id>.md` (outside the repo; quotes of minors' lessons). Lessons 4–5: Michael's full-model run of 2026-11-17. The new lesson-3 record follows the scoring model (P⇒Q with one wrong attempt is medium, not high; no ∃ gap).
+
+**Maths gaps, votes against this benchmark (28 Opus gaps in 6 lessons):**
+
+| Lesson | Opus gaps | Vote A: recall · confidence | Vote B: recall · confidence |
+|---|---|---|---|
+| 3 `c1698fb7` | 5 | 5 · **5** | 5 · **5** |
+| 4 `b8f9fb8c` | 2 | 2 · 2 | 2 · 0 |
+| 5 `3d497118` | 6 | 5 · 3 | 6 · 4 |
+| 6 `24aedf8f` | 6 | 4 · 4 | 3 · 2 |
+| 7 `514fe1df` | 5 | 3 · 2 | 4 · 3 |
+| 8 `fc8fa23d` | 4 | 4 · 2 | 3 · 1 |
+| **Total** | **28** | **23 (82%) · 18 (64%)** | **23 (82%) · 15 (54%)** |
+
+- **Extra gaps at medium or high:** vote A 1 (lesson 3, an ∃ item), vote B 1 (lesson 6, a factorising row, high).
+- **Learning habits are the weak part:** Opus's high habits (answers before thinking in lessons 3 and 8; no self-check in lessons 4, 5, 7) come out high only in lesson 5; elsewhere medium or low.
+- **What is missed:** single-attempt gaps where Luna has no wrong attempt (lesson 6 Δ′ ≤ 0, lesson 7 domain in the sign table), and rows Luna merges with a neighbour (lesson 7 open interval into "values at points").
+- **Tutor tables** of process 07 agree with coding v2.1 + script only partly (§0.3); the band numbers in §1 stay against Opus A.
+
+**Reading:** against one consistent benchmark, the vote finds 82% of Opus's maths gaps and agrees on the confidence of 54–64%; it is strongest where the evidence is several wrong attempts (lesson 3: 5/5), weakest on one-attempt gaps and on habits. This is still Opus against Luna, not accuracy; Khanh's hand check (golden-set step 5) is the test.
+
 ## Set-up
 
 - **Lessons:** golden lessons 3–8 (`c1698fb7`, `b8f9fb8c`, `3d497118`, `24aedf8f`, `514fe1df`, `fc8fa23d`). Not 1–2 (blind), not 9–10 (few-shot source).
