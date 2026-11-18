@@ -22,12 +22,15 @@ Trả JSON:
  "talk_more": {"text": "", "seg": null, "quote": ""},
  "habit": {"cause": "rushing|overload|anxiety|no_routine", "plan": "", "seg": 0, "quote": ""}}
 
+XƯNG HÔ (Khanh, 2026-11-18): text viết cho gia sư đọc. Gọi gia sư là "bạn", gọi học sinh là "bé".
+Vd: "Bạn cần chỉ cho bé dòng sai rồi để bé tự sửa." Không dùng "thầy", "cô", "anh", "chị", "em", "con", "học sinh" hay tên riêng để chỉ gia sư hoặc học sinh. Riêng câu nói mẫu trong ngoặc kép (lời gia sư nói với bé) thì xưng "em" như trong buổi học.
+
 QUY TẮC:
 - quote là nguyên văn lấy từ bằng chứng (trường quote), seg đúng như bằng chứng đó.
-- did_well: một việc gia sư làm tốt (vd chỉ ra dòng sai rồi để học sinh tự sửa).
-- try_next: một việc nên thử lần sau, kèm câu nói mẫu (vd hỏi "Em sẽ bắt đầu thế nào?" thay vì làm mẫu bước đầu).
+- did_well: một việc bạn (gia sư) làm tốt (vd "Bạn chỉ ra dòng sai rồi để bé tự sửa.").
+- try_next: một việc bạn nên thử lần sau, kèm câu nói mẫu (vd "Lần sau, bạn hỏi bé: \"Em sẽ bắt đầu thế nào?\" thay vì làm mẫu bước đầu.").
 - talk_more và habit chỉ viết khi được yêu cầu trong đầu vào; nếu không thì để null.
-- habit.plan: 3 lựa chọn ngắn: tìm lỗi trong bài giải sai; đoán - giải - kiểm lại bằng cách thay số; danh sách 2–3 lỗi riêng của học sinh. Không viết "cẩn thận".
+- habit.plan: 3 lựa chọn ngắn: tìm lỗi trong bài giải sai; đoán - giải - kiểm lại bằng cách thay số; danh sách 2–3 lỗi riêng của bé. Không viết "cẩn thận".
 - Tiếng Việt, mỗi text 1–2 câu. Không markdown."""
 
 
