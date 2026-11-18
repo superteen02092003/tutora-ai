@@ -4,6 +4,8 @@
 
 **r11–r12 (2026-11-18, behaviour-7 fix + no-evidence attempts left out): band agreement with Opus A 89% and 81% (53 cells; mean 85%). No high or medium extra gap in r11, one medium in r12 (r10: one high, two medium). Maths-gap confidence, lessons 3–5: 8/13 in both (r10: 10/13). Not stable enough to wire in: confidence and the learning-habit rows still swing between runs.** See §0.6.
 
+**Slip in code + vote of 3 runs (2026-11-18): both votes agree with Opus A on 45/53 (85%); the two votes agree with each other on 46/53 (87%), against 79–81% between single runs. No extra gap at medium or high in either vote. Maths-gap confidence, lessons 3–5: 8/13 and 7/13 — the rest is mostly where the lesson-3 stage-1 table departs from Opus's own scoring rules, or where a doubt or a "not finished" label moves one row.** See §0.7.
+
 **Latest (r9–r10, gaps merged by error pattern): band agreement with Opus A 85% and 80% (mean 82%). Maths-gap confidence agrees on 3/7 and 5/7 (was 2/7). r10 meets both wiring thresholds, r9 only the band one; the merge works when Luna writes the same `error_pattern` for a repeated mistake, and it does not always.**
 
 **Latest (r5–r8): band agreement with Opus A 76–82% (mean 78%; r8 against Opus B 85%). Target ≥ 85% not reached. Behaviour 6 diagnosed and fixed in two steps (r5–r6, r7–r8); it is now limited by noise near the band thresholds, not by a labelling bias. Gaps, lessons 3–4: the skill-naming rule lifts maths recall to 7/7 but confidence still agrees on only 2/7 (threshold 5/7).** Details in §1–§2 and Next; the first-comparison text (r1–r4) is kept below it.
@@ -105,6 +107,50 @@ Against Opus B: 45/53 (85%) and 41/53 (77%). Behaviours 4 and 6 still carry most
 - **Extra gaps left:** r12 one medium row on lesson 5 (3057, which Opus lists as shown correct); low "watch" rows on 3232 in lesson 5 in both runs.
 
 **Reading:** the two fixes did what they were meant to (behaviour 7 right in every run; extra gaps at medium or high down to 0–1). Maths-gap confidence did not improve (8/13 in both, against 7/13 and 10/13 for r9–r10): it depends on the slip decision (`fixed_alone_after_pointing`), which swings between runs and feeds both the maths rows and the "no self-check" habit. That flag is the next target.
+
+### 0.7 Slip decided in code, and a vote of 3 runs (2026-11-18)
+
+**Changes.**
+- **Slip in code** (`analysis._derive_fixed_alone`, used by `gaps()`): a wrong attempt is "fixed alone once pointed at" when the pupil's next attempt on the same exercise (same skill words when there is no exercise id) is correct, alone or after a hint, and the tutor did not say the fix or the answer in between (`error_resolved_by_tutor`, `gives_answer`). The model's `fixed_alone_after_pointing` is ignored.
+- **Every such error feeds "no self-check",** also when the errors repeat and form a maths gap (the full-model run reads lesson 4's two bracket errors both ways).
+- **Vote** (`analysis.vote`, `analysis.run_voted`): 3 independent runs. A band stands when 2 of 3 agree; with no majority, "near", and the behaviour is listed as unsure. Gaps of different runs are one gap when they share a wrong or hinted attempt; a gap is kept when 2 of 3 runs have it; its confidence is the majority, else the lowest. Habits by name, same rule. The eval script builds votes from saved runs (`--vote A=11,12,13`), recomputing gaps and bands with today's code.
+- Runs r13–r16 (same prompt as r11–r12). Vote A = r11, r12, r13; vote B = r14, r15, r16.
+
+**Tutor standard, against Opus A (53 cells):**
+
+| Run | Same band | 1 | 2 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| r13 | 41/53 (77%) | 5 | 6 | 4 | 5 | 3 | 4/5 | 5 | 5 | 4 |
+| r14 | 41/53 (77%) | 6 | 6 | 3 | 5 | 3 | 4/5 | 5 | 5 | 4 |
+| r15 | 45/53 (85%) | 5 | 6 | 4 | 5 | 5 | 4/5 | 6 | 6 | 4 |
+| r16 | 44/53 (83%) | 5 | 6 | 3 | 5 | 5 | 4/5 | 5 | 5 | 6 |
+| **Vote A (r11–r13)** | **45/53 (85%)** | 5 | 6 | 5 | 6 | 3 | 5/5 | 5 | 6 | 4 |
+| **Vote B (r14–r16)** | **45/53 (85%)** | 5 | 6 | 4 | 5 | 5 | 4/5 | 5 | 6 | 5 |
+| Vote A vs vote B (stability) | **46/53 (87%)** | 6 | 6 | 4 | 5 | 4 | 4/5 | 6 | 6 | 5 |
+| Single runs vs each other (r11/12, r13/14, r15/16) | 79–81% | | | | | | | | | |
+
+Against Opus B: 43/53 (81%) for both votes. Single runs r11–r16 against Opus A span 77–89% (mean 82%); both votes land at 85%, so the vote mainly removes the spread. Behaviour 4 (`gives_answer`, κ 0.17 even between Opus runs) and 6 still differ most.
+
+**Gaps, lessons 3–5 (lesson 3: stage-1 table; 4–5: full model):**
+
+| | r10 (best single) | r11 / r12 recomputed | Vote A | Vote B |
+|---|---|---|---|---|
+| Maths confidence, lesson 3 (of 5) | 4 | 3 / 2 | 3 | 3 |
+| Maths confidence, lesson 4 (of 2) | 2 | 2 / 2 | 2 | 0 |
+| Maths confidence, lesson 5 (of 6) | 4 | 4 / 4 | 3 | 4 |
+| **Total (of 13)** | **10** | 9 / 8 | **8** | **7** |
+| Maths recall (of 13) | 13 | 13 / 13 | 12 (lesson 5 M6) | 12 (lesson 3 M5) |
+| Extra gaps at medium or high | 3 | 0 / 1 | **0** | **0** |
+| "No self-check": lesson 3 / 4 / 5 (Opus medium / high / high) | — | high / medium / high | high / medium / **high** | high / low / **high** |
+
+**Where the votes still differ from Opus, and why:**
+- **Lesson 3 M2 (P⇒Q with a false P), Opus high, votes medium.** One wrong attempt on one problem; Opus's own scoring model (§2: high needs 2 problems) gives medium. The lesson-3 table is stage 1, written before the scoring model.
+- **Lesson 3 M5 (proving ∃ false), Opus low "not finished", votes medium or missed:** Luna labels 2945 "wrong", Opus "not finished".
+- **Lesson 3 "no self-check", Opus medium, votes high:** the slip rule now feeds every pointed-at fix into the habit; Opus counts three tutor-proposed tests there.
+- **Lesson 4, vote B:** brackets medium (a transcript doubt at 2063 lowers it one step; Opus has the same doubt but kept high) and ∀/∃ medium (Luna labels the fix at 2337 "not finished", so it is no slip).
+- **Lesson 5 (a + b)², Opus medium, votes low (slip):** the pupil recalls the identity after a hint (1299); Opus counts it unfixed because the tutor then applied it (1321). The slip rule only looks for the tutor saying the fix before the next attempt.
+
+**Reading:** the vote does what it is for — the band result no longer depends on the run (85% twice, 87% between votes) and extra gaps at medium or high are gone. Maths-gap confidence stays at 7–8 of 13 against this benchmark; about half of the remaining misses are rows where the stage-1 lesson-3 table does not follow the scoring model Luna's code implements. A full-model run of lesson 3 (and 6–10) by process 07 would give a consistent benchmark.
 
 ## Set-up
 

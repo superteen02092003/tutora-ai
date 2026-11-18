@@ -56,6 +56,8 @@ def bands_of(folder: Path, sub: str, lid: str):
     if not p.exists():
         return None
     data = load(p)
+    if data.get("voted"):
+        return data["tutor_standard"]["bands"]
     segs = load(folder / "transcripts" / f"{lid}.json")["segments"]
     ev = data.get("evidence", data)  # v2 output wraps labels in "evidence"
     if "blocks" not in ev and "segments" in ev and isinstance(ev["segments"], list) and ev["segments"] \
@@ -80,6 +82,20 @@ def agreement(folder: Path, ids: list[str], a: str, b: str) -> dict:
             "pct": round(100 * tot[0] / tot[1], 1) if tot[1] else None}
 
 
+def build_vote(folder: Path, ids: list[str], name: str, run_nos: list[int]) -> None:
+    """luna_vote_<name>/<id>.json = analysis.vote() over saved runs; gaps and bands recomputed with today's code."""
+    out_dir = folder / f"luna_vote_{name}"
+    out_dir.mkdir(exist_ok=True)
+    for lid in ids:
+        segs = load(folder / "transcripts" / f"{lid}.json")["segments"]
+        outs = []
+        for k in run_nos:
+            o = load(folder / f"luna_v2_r{k}" / f"{lid}.json")
+            ev = o["evidence"]
+            outs.append(dict(o, gaps=analysis.gaps(ev), tutor_standard=analysis.tutor_behaviours(ev, segs)))
+        (out_dir / f"{lid}.json").write_text(json.dumps(analysis.vote(outs), ensure_ascii=False, indent=1), encoding="utf-8")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("folder")
@@ -89,6 +105,7 @@ def main() -> None:
     ap.add_argument("--baseline", action="store_true")
     ap.add_argument("--effort", default="high")
     ap.add_argument("--start", type=int, default=1)
+    ap.add_argument("--vote", action="append", default=[], help="NAME=11,12,13: vote over saved runs r11–r13")
     args = ap.parse_args()
     folder = Path(args.folder)
     ids = args.ids or sorted(p.stem for p in (folder / "opusA").glob("*.json"))
@@ -96,9 +113,15 @@ def main() -> None:
         async def all_():
             await asyncio.gather(*(run_lesson(folder, i, args.runs, args.baseline, args.effort, args.start) for i in ids))
         asyncio.run(all_())
+    for spec in args.vote:
+        name, nos = spec.split("=")
+        build_vote(folder, ids, name, [int(x) for x in nos.split(",")])
     runs = sorted((p.name for p in folder.glob("luna_v2_r*") if p.is_dir()), key=lambda n: int(n.rsplit("r", 1)[1]))
+    votes = sorted(p.name for p in folder.glob("luna_vote_*") if p.is_dir())
     pairs = [("opusA", "opusB")] + [(r, "opusA") for r in runs] + [(r, "opusB") for r in runs] \
-        + [(runs[i], runs[i + 1]) for i in range(0, len(runs) - 1, 2)] + [("luna_old", "opusA"), ("luna_old", "opusB")]
+        + [(runs[i], runs[i + 1]) for i in range(0, len(runs) - 1, 2)] + [("luna_old", "opusA"), ("luna_old", "opusB")] \
+        + [(v, o) for v in votes for o in ("opusA", "opusB")] + [(votes[i], votes[i + 1]) for i in range(len(votes) - 1)]
+    runs = runs + votes
     report = {f"{a} vs {b}": agreement(folder, ids, a, b) for a, b in pairs}
     report["bands"] = {lid[:8]: {s: bands_of(folder, s, lid) for s in ["opusA", "opusB", *runs, "luna_old"]}
                        for lid in ids}

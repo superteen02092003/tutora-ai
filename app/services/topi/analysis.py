@@ -11,6 +11,7 @@ import asyncio
 import json
 import re
 import statistics as st
+from collections import Counter
 from typing import Any, Optional
 
 from . import analysis_prompts as P
@@ -218,12 +219,34 @@ def _merge_by_error_pattern(groups: dict[str, list[dict]]) -> dict[str, list[dic
     return out
 
 
+def _derive_fixed_alone(attempts: list[dict], te: list[dict]) -> list[dict]:
+    """Slip test of process 07 step 7, decided in code (eval 2026-11-18: the model's flag swung between runs).
+
+    A wrong attempt counts as fixed alone once pointed at when the pupil's NEXT attempt on the same exercise
+    (same skill words when there is no exercise id) is correct, alone or after a hint, and the tutor did not
+    say the fix or the answer in between (error_resolved_by_tutor, gives_answer).
+    """
+    tells = [t["seg"] for t in te or [] if t.get("type") in ("error_resolved_by_tutor", "gives_answer")]
+    order = sorted((dict(a) for a in attempts or []), key=lambda a: a["seg"])
+    norm = lambda x: _WS.sub(" ", (x or "").strip().lower())  # noqa: E731
+    for i, a in enumerate(order):
+        a["fixed_alone_after_pointing"] = False
+        if a.get("label") != "wrong":
+            continue
+        ex = a.get("exercise_id") or ""
+        same = (lambda b: b.get("exercise_id") == ex) if ex else (lambda b: norm(b.get("skill")) == norm(a.get("skill")))
+        nxt = next((b for b in order[i + 1:] if b["seg"] > a["seg"] and same(b)), None)
+        if nxt and nxt.get("label") in ("alone", "after_hint") and not any(a["seg"] < t <= nxt["seg"] for t in tells):
+            a["fixed_alone_after_pointing"] = True
+    return order
+
+
 def gaps(ev: dict[str, Any]) -> dict[str, Any]:
     nodes = skill_map.by_id()
     ex_skill = {e["id"]: e.get("skill", "") for e in ev.get("exercises") or []}
     doubt_segs = {d.get("seg") for d in ev.get("doubts") or []}
     groups: dict[str, list[dict]] = {}
-    for a in ev.get("attempts") or []:
+    for a in _derive_fixed_alone(ev.get("attempts") or [], ev.get("tutor_events") or []):
         groups.setdefault(_skill_key(a, ex_skill), []).append(a)
     groups = _merge_by_error_pattern(groups)
 
@@ -249,7 +272,9 @@ def gaps(ev: dict[str, Any]) -> dict[str, Any]:
             conf = "low"  # a slip, a hint once, or not finished only
         if is_slip:
             conf = "low"
-            slips += [a for a in wrong_or_hint if a["label"] == "wrong"]
+        # every error fixed alone once pointed at shows the habit behind it, even when the error repeats and
+        # is a maths gap too (process 07 run 2026-11-17, lesson 4: two bracket slips feed "no self-check", high)
+        slips += [a for a in wrong_or_hint if a["label"] == "wrong" and a.get("fixed_alone_after_pointing")]
         if any(a["seg"] in doubt_segs for a in bad):
             conf = _down(conf)
         alone = sum(1 for a in atts if a["label"] == "alone")
@@ -350,6 +375,90 @@ def tutor_behaviours(ev: dict[str, Any], segments: list[dict[str, Any]]) -> dict
         "10": _band(values["10_chances"], 0.5, 0.25),
     }
     return {"values": values, "bands": bands}
+
+
+# ------------------------------------------------------------------ vote over independent runs (self-consistency)
+def _bad_segs(g: dict) -> set:
+    return {a["seg"] for a in g.get("attempts") or [] if a.get("label") != "alone"}
+
+
+def _vote_conf(confs: list[str], need: int) -> str:
+    c, n = Counter(confs).most_common(1)[0]
+    return c if n >= need else min(confs, key=CONF.index)  # no majority: the lowest, to stay careful
+
+
+def vote(outs: list[dict[str, Any]]) -> dict[str, Any]:
+    """Combine independent run() outputs: a band or a gap stands when a majority of runs agree.
+
+    Bands: the majority band; with no majority, "near" and the behaviour is listed as unsure.
+    Maths gaps: gaps of different runs are one gap when they share a wrong or hinted attempt; kept when found by a
+    majority of runs; confidence by majority, else the lowest. Learning habits: by habit name, same rule.
+    """
+    n = len(outs)
+    need = n // 2 + 1
+    bands, unsure = {}, []
+    for k in outs[0]["tutor_standard"]["bands"]:
+        vals = [o["tutor_standard"]["bands"].get(k) for o in outs]
+        v, cnt = Counter(vals).most_common(1)[0]
+        if cnt < need:
+            v = "near" if any(x is not None for x in vals) else None
+            unsure.append(k)
+        bands[k] = v
+
+    items = [(i, g) for i, o in enumerate(outs) for g in o["gaps"]["maths"]]
+    parent = list(range(len(items)))
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    segs = [_bad_segs(g) for _, g in items]
+    for x in range(len(items)):
+        for y in range(x + 1, len(items)):
+            if items[x][0] != items[y][0] and segs[x] & segs[y]:
+                parent[find(x)] = find(y)
+    clusters: dict[int, list[int]] = {}
+    for x in range(len(items)):
+        clusters.setdefault(find(x), []).append(x)
+    maths = []
+    for members in clusters.values():
+        runs = {items[x][0] for x in members}
+        if len(runs) < need:
+            continue
+        per_run = {r: max((items[x][1]["confidence"] for x in members if items[x][0] == r), key=CONF.index) for r in runs}
+        conf = _vote_conf(list(per_run.values()), need)
+        slips = [any(items[x][1].get("slip") for x in members if items[x][0] == r) for r in runs]
+        rep = max((items[x][1] for x in members if items[x][1]["confidence"] == conf) or [items[x][1] for x in members],
+                  key=lambda g: len(g.get("attempts") or []))
+        maths.append(dict(rep, confidence=conf, slip=sum(slips) >= need, votes=len(runs)))
+    maths.sort(key=lambda g: (-CONF.index(g["confidence"]), -g["votes"], -len(g.get("attempts") or []), g["skill"]))
+
+    learning = []
+    habits = {h["habit"] for o in outs for h in o["gaps"]["learning_skills"]}
+    for habit in habits:
+        rows = [h for o in outs for h in o["gaps"]["learning_skills"] if h["habit"] == habit]
+        if len(rows) < need:
+            continue
+        conf = _vote_conf([h["confidence"] for h in rows], need)
+        rep = max((h for h in rows if h["confidence"] == conf), key=lambda h: h.get("instances", 0))
+        learning.append(dict(rep, confidence=conf, votes=len(rows)))
+    learning.sort(key=lambda g: (-CONF.index(g["confidence"]), -g["votes"], g["habit"]))
+
+    base = outs[0]
+    return {"version": base.get("version", VERSION) + "+vote", "model": base.get("model"), "runs": n, "voted": True,
+            "evidence": base["evidence"],
+            "gaps": {"maths": maths, "learning_skills": learning, "shown_correct": base["gaps"].get("shown_correct", []),
+                     "doubts": base["gaps"].get("doubts", [])},
+            "tutor_standard": {"values": base["tutor_standard"].get("values"), "bands": bands, "unsure": unsure}}
+
+
+async def run_voted(client, *, model: str, segments: list[dict[str, Any]], grade: Optional[int],
+                    reasoning_effort: Optional[str] = "high", runs: int = 3) -> dict[str, Any]:
+    outs = await asyncio.gather(*(run(client, model=model, segments=segments, grade=grade,
+                                      reasoning_effort=reasoning_effort) for _ in range(runs)))
+    return vote(list(outs))
 
 
 async def run(client, *, model: str, segments: list[dict[str, Any]], grade: Optional[int],
