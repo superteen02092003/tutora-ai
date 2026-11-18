@@ -113,6 +113,40 @@ def test_error_after_standard_moves_down_without_star():
     assert ch["to"] == "improving" and ch["star"] is False
 
 
+def test_unfinished_exercise_does_not_block_standard():
+    # Buổi 28/10: chữa bài về nhà, hai bài tự làm đúng, bài thứ ba chưa so sánh hết đỉnh.
+    ev = {"exercises": [{"id": "X1", "result": "pupil_alone", "skill_node": "N10.04", "start_seg": 5},
+                        {"id": "X2", "result": "pupil_alone", "skill_node": "N10.04", "start_seg": 9},
+                        {"id": "X3", "result": "not_finished", "skill_node": "N10.04", "start_seg": 11}],
+          "pupil_events": []}
+    st = [{"node": "N10.04", "level": "improving", "first_seen": "2026-10-26"}]
+    out = levels.apply(ev, st, "2026-10-28")
+    assert [o["outcome"] for o in out["observations"]] == ["alone", "alone", "unfinished"]
+    assert out["proposed_changes"][0]["to"] == "standard"
+    # Như buổi 28/10 thật: bài chưa xong còn mang một lỗi (quên so một đỉnh).
+    ev["pupil_events"] = [{"type": "error", "exercise_id": "X3", "skill_node": "N10.04"}]
+    assert levels.apply(ev, st, "2026-10-28")["proposed_changes"][0]["to"] == "standard"
+
+
+def test_more_errors_than_alone_blocks_standard():
+    ev = {"exercises": [{"id": f"X{i}", "result": r, "skill_node": "N7.03", "start_seg": i}
+                        for i, r in enumerate(["pupil_alone", "pupil_alone", "tutor_solved", "tutor_solved"])],
+          "pupil_events": []}
+    st = [{"node": "N7.03", "level": "improving", "first_seen": "2026-11-02"}]
+    assert levels.apply(ev, st, "2026-11-12")["proposed_changes"] == []
+
+
+def test_unfinished_with_an_error_still_counts_wrong():
+    ev = {"exercises": [{"id": "X1", "result": "not_finished", "skill_node": "N10.04", "start_seg": 0}],
+          "pupil_events": [{"type": "error", "exercise_id": "X1", "skill_node": "N10.04"}]}
+    assert levels.apply(ev, [], "2026-10-28")["observations"][0]["outcome"] == "wrong"
+
+
+def test_only_unfinished_is_first_seen_to_do():
+    ev = {"exercises": [{"id": "X1", "result": "not_finished", "skill_node": "N10.04", "start_seg": 0}], "pupil_events": []}
+    assert levels.apply(ev, [], "2026-10-28")["first_seen"] == [{"node": "N10.04", "level": "to_do"}]
+
+
 def test_self_corrected_error_is_not_alone():
     ev = {"exercises": [{"id": "X1", "result": "pupil_alone", "skill_node": "N7.03", "start_seg": 0}],
           "pupil_events": [{"type": "error", "exercise_id": "X1", "skill_node": "N7.03"}]}
