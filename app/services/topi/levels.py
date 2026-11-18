@@ -6,9 +6,25 @@ Quyết định 2026-11-11: một sao cho MỖI lần lên một mức (to_do ->
 from datetime import date
 from typing import Any, Optional
 
+from . import skill_map
+
 ORDER = ["to_do", "improving", "standard", "mastered"]
 MASTERED_AFTER_DAYS = 21  # "ít nhất 3 tuần"; bằng chứng nghiêng về ~4 tuần
 STANDARD_ALONE = 2        # 2 bài mới tự làm đúng, không gợi ý
+# Kỹ năng thấp hơn lớp của học sinh từ chừng này lớp trở xuống chỉ được ghi khi làm SAI:
+# học sinh lớp 10 cộng phân số trong lúc giải bài lượng giác không phải là "Tiến bộ"
+# ở kỹ năng lớp 4 (test trên điện thoại 2026-11-18: 15/25 kỹ năng của một học sinh
+# lớp 10 là kỹ năng lớp 3–8 ở mức Tiến bộ).
+LOWER_GRADE_GAP = 2
+
+
+def keep_observation(node: str, outcome: str, grade: Optional[int]) -> bool:
+    """Bỏ quan sát đúng / có gợi ý / chưa xong ở kỹ năng lớp dưới xa; giữ mọi lần sai
+    (lỗ hổng lớp dưới vẫn phải truy được)."""
+    if not grade or outcome == "wrong":
+        return True
+    n = skill_map.by_id().get(node)
+    return n is None or n["grade"] > grade - LOWER_GRADE_GAP
 
 
 def _d(s: Optional[str]) -> Optional[date]:
@@ -79,8 +95,10 @@ def outcome_of(exercise_result: str, had_error: bool) -> str:
     return "wrong"
 
 
-def apply(evidence: dict[str, Any], states: list[dict[str, Any]], lesson_date: str) -> dict[str, Any]:
-    """Từ evidence đã kiểm + trạng thái cũ -> observations, proposed_changes, first_seen."""
+def apply(evidence: dict[str, Any], states: list[dict[str, Any]], lesson_date: str,
+          grade: Optional[int] = None) -> dict[str, Any]:
+    """Từ evidence đã kiểm + trạng thái cũ -> observations, proposed_changes, first_seen.
+    `grade`: lớp của học sinh; kỹ năng lớp dưới xa chỉ được ghi khi sai (keep_observation)."""
     by_ex_errors: dict[str, set[str]] = {}
     for ev in evidence.get("pupil_events") or []:
         if ev.get("type") == "error" and ev.get("exercise_id"):
@@ -102,6 +120,8 @@ def apply(evidence: dict[str, Any], states: list[dict[str, Any]], lesson_date: s
         for node in nodes:
             if node and not any(o["node"] == node and o["exercise_id"] == ex_id for o in observations):
                 observations.append({"node": node, "exercise_id": ex_id, "outcome": "wrong", "seg": None, "quote": ""})
+
+    observations = [o for o in observations if keep_observation(o["node"], o["outcome"], grade)]
 
     known = {s["node"]: s for s in states}
     per_node: dict[str, list[str]] = {}
