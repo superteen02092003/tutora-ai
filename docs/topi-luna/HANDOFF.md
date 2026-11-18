@@ -24,6 +24,7 @@ Nhánh nghiên cứu, chưa nối vào `pipeline.py`. Đọc theo thứ tự: `0
 - Test: `python -m pytest -q tests/test_topi_analysis.py`
 
 ## Việc tiếp
+0. **Mới nhất (18/11):** chuẩn = process 07 full model cho buổi 3–8 (`<data>/opus07/` + bản của Michael cho buổi 4–5). Việc tiếp: cải thiện thói quen học tập và lỗ hổng chỉ có một lần sai; Khanh chấm tay (golden-set bước 5). Lần chạy Luna mới dùng `--start 17`.
 1. (Đã xong r5–r10; dữ liệu trong cùng thư mục chấm.) r9–r10 gộp lỗ hổng theo `error_pattern` (model ghi kiểu lỗi, code gộp): band 85%/80%, độ tin cậy toán 3/7 và 5/7 — r10 đạt cả hai ngưỡng, r9 chưa. Tiếp: cho lượt attempts dùng lại đúng chữ của kiểu lỗi đã gặp; câu "lỗi này con còn lặp lại" nâng độ tin cậy; hoặc Khanh chấm tay r10. Lần chạy mới dùng `--start 11`.
 1b. Từ đối chiếu 18/11 (`03-eval.md` §0.5): sửa hành vi 7 (không có dịp → bỏ khỏi điểm) và chọn một bộ ngưỡng band; chặn lỗ hổng thừa bằng code (lần làm dùng lại kết quả đã sửa hoặc trả lời câu dẫn dắt); Michael + Khanh chọn chuẩn Opus (coding v2.1 hay process 07); thêm state, award, khuyến nghị, "điều làm tốt / điều nên thử", dữ kiện cho process 08 vào schema v2.
 2. Nếu đạt ngưỡng: nối v2 vào `pipeline.py` sau một setting, sửa `topi-api-contract.md` trước; nhánh/PR riêng.

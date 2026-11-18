@@ -1,4 +1,6 @@
-# Luna (analysis v2) against Claude Opus — comparison, 2026-11-17 (r1–r10), benchmark updated 2026-11-18
+# Luna (analysis v2) against Claude Opus — comparison, 2026-11-17 to 2026-11-18 (r1–r16, votes)
+
+**Latest (§0.8): against a process-07 full-model benchmark for lessons 3–8, the vote of 3 runs finds 23 of 28 Opus maths gaps (82%) and agrees on confidence for 18 and 15 of 28; learning habits are the weak part.**
 
 **Update 2026-11-18 — against Michael's full-model run (process 07, lessons 5 and 4, 2026-11-17), which corrects the stage-1 lesson-4 gaps: maths-gap confidence, lessons 3–4, agrees on 4/7 (r9) and 6/7 (r10), not 3/7 and 5/7. Lesson 5, new: recall 6/6, confidence 3/6 and 4/6. Main Luna fault: extra gaps (r10: one high in lesson 4, two medium in lesson 5) on attempts Opus lists as shown correct or as no evidence. The two Opus methods (coding v2.1 + script, and process 07's own tutor table) disagree on 4 of 8 behaviours a lesson, so the band numbers below measure agreement with one method, not truth.** See §0.
 
