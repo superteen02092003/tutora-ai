@@ -49,7 +49,10 @@ def next_level(
         return ORDER[ORDER.index(current) - 1], "R-down"
     if current == "to_do" and (alone > 0 or hint > 0) and alone + hint > wrong:
         return "improving", "R-improving"
-    if current == "improving" and alone >= STANDARD_ALONE and wrong == 0 and later_lesson:
+    # Spec: "ít nhất 2 bài mới tự làm đúng, không gợi ý, ở buổi sau" — không đòi 0 lỗi.
+    # Một lỗi lẻ (buổi 28/10: quên so một đỉnh, tự nhận ra) không chặn; lỗi nhiều
+    # hơn bài tự làm đúng thì vẫn chặn, cùng ý với "đa số sai" ở mức to_do.
+    if current == "improving" and alone >= STANDARD_ALONE and alone > wrong and later_lesson:
         return "standard", "R-standard"
     if current == "standard" and alone >= 1 and wrong == 0:
         since = _d(standard_since)
@@ -60,11 +63,19 @@ def next_level(
 
 def outcome_of(exercise_result: str, had_error: bool) -> str:
     """alone chỉ khi tự làm đúng và không vấp lỗi nào ở nút này; có gợi ý hoặc tự sửa
-    sau khi sai -> hint; gia sư giải hoặc chưa xong -> wrong."""
+    sau khi sai -> hint; gia sư giải -> wrong.
+
+    Chưa xong -> unfinished: spec tách "not finished" khỏi "wrong"
+    (skills-detector.md, How it works, bước 2). Không tính là đúng, cũng không chặn
+    lên mức; lỗi cụ thể trong bài vẫn thành quan sát wrong qua pupil_events.
+    Buổi 28/10: hai bài về nhà tự làm đúng + một bài chưa so sánh hết đỉnh từng
+    chặn N10.04 lên standard."""
     if exercise_result == "pupil_alone":
         return "hint" if had_error else "alone"
     if exercise_result == "pupil_with_help":
         return "hint"
+    if exercise_result == "not_finished":
+        return "wrong" if had_error else "unfinished"
     return "wrong"
 
 
