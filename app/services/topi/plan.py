@@ -27,18 +27,33 @@ QUY TẮC:
 - Không markdown."""
 
 
-def rank_gaps(evidence: dict[str, Any], states: list[dict[str, Any]]) -> list[dict[str, Any]]:
+def rank_gaps(evidence: dict[str, Any], states: list[dict[str, Any]],
+              raised: frozenset[str] | set[str] = frozenset()) -> list[dict[str, Any]]:
+    """Lỗ hổng = kỹ năng có bằng chứng sai: lỗi trong buổi này, đã sai ở buổi trước,
+    hoặc đang ở mức to_do. Kỹ năng "improving" chưa từng sai không phải lỗ hổng: nó
+    chỉ chưa đủ buổi để lên standard (luật buổi đầu). `raised`: nút vừa lên standard
+    hoặc mastered ở chính buổi này, không đưa vào kế hoạch.
+
+    Buổi 28/10 (học sinh lớp 10): 15 kỹ năng ôn lớp 3–8, 0 lần sai, từng làm danh
+    sách "Cần luyện tập" tăng từ 5 lên 22."""
     nodes = skill_map.by_id()
     errors: dict[str, list[dict]] = {}
     for ev in evidence.get("pupil_events") or []:
         if ev.get("type") == "error" and ev.get("skill_node") in nodes:
             errors.setdefault(ev["skill_node"], []).append(ev)
     state = {s["node"]: s for s in states}
-    candidates = set(errors) | {n for n, s in state.items() if s.get("level") in ("to_do", "improving") and n in nodes}
+
+    def past_wrong(node: str) -> int:
+        return len({o.get("lesson_date") for o in (state.get(node, {}).get("observations") or [])
+                    if o.get("outcome") == "wrong"})
 
     def seen(node: str) -> int:
-        past = {o.get("lesson_date") for o in (state.get(node, {}).get("observations") or []) if o.get("outcome") == "wrong"}
-        return len(past) + (1 if node in errors else 0)
+        return past_wrong(node) + (1 if node in errors else 0)
+
+    candidates = set(errors) | {
+        n for n, s in state.items() if n in nodes and (
+            s.get("level") == "to_do" or (s.get("level") == "improving" and past_wrong(n) > 0))}
+    candidates -= set(raised)
 
     gap_nodes = {n for n in candidates if state.get(n, {}).get("level", "to_do") in ("to_do", "improving")}
     rows = []
@@ -72,8 +87,9 @@ def _verified(asks: Any) -> list[dict[str, Any]]:
 
 
 async def build(client, *, model: str, evidence: dict[str, Any], states: list[dict[str, Any]],
-                grade: Optional[int], last_homework: Optional[str]) -> dict[str, Any]:
-    gaps = rank_gaps(evidence, states)
+                grade: Optional[int], last_homework: Optional[str],
+                raised: frozenset[str] | set[str] = frozenset()) -> dict[str, Any]:
+    gaps = rank_gaps(evidence, states, raised)
     focus = next((g for g in gaps if g["role"] == "focus"), None)
     topics = [ex.get("quote", "") for ex in (evidence.get("exercises") or [])][:8]
     steps: list[dict[str, Any]] = []
