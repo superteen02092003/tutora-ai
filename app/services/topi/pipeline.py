@@ -28,7 +28,7 @@ async def run(client, req: TopiRunRequest, *, evidence_model: str, write_model: 
     skills, skills_error = None, None
     if "skills" in req.outputs:
         try:
-            skills = levels.apply(ev, states, req.lesson_date)
+            skills = levels.apply(ev, states, req.lesson_date, req.grade)
         except Exception as e:  # pragma: no cover - code thuần, chỉ phòng hờ
             skills_error = f"{type(e).__name__}: {e}"
     # Chỉ nút vừa lên standard/mastered thôi là lỗ hổng; to_do -> improving vẫn còn.
