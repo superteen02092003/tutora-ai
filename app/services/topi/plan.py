@@ -24,6 +24,7 @@ QUY TẮC:
 - warmup: ĐÚNG 1 bài ngắn trộn dạng, làm trong 4 phút.
 - "say" là tiếng Việt, ngắn, bắt đầu bằng "Hỏi:". Mỗi câu hỏi một bài, không gộp bằng dấu phẩy.
 - problem/answer viết bằng cú pháp SymPy: nhân dùng *, luỹ thừa dùng **, biến là chữ thường. Biểu thức thì answer là dạng rút gọn; phương trình "lhs = rhs" thì answer dạng "x = 3".
+- Xưng hô: gọi gia sư là "bạn", học sinh là "bé" trong lời dặn gia sư; lời gia sư nói với bé (sau "Hỏi:") xưng "em". Không dùng "thầy", "cô", "con", "học sinh" hay tên riêng.
 - Không markdown."""
 
 
@@ -105,7 +106,7 @@ async def build(client, *, model: str, evidence: dict[str, Any], states: list[di
         memory, warmup = [], []
     hw = (evidence.get("homework_set") or {}).get("quote") or last_homework or ""
     steps.append({"name": "homework", "minutes": STEP_MINUTES["homework"],
-                  "asks": [{"say": "Chữa những bài về nhà học sinh làm sai.", "problem": None, "answer": None,
+                  "asks": [{"say": "Chữa những bài về nhà bé làm sai.", "problem": None, "answer": None,
                             "verified": None, "homework_quote": hw}] if hw else []})
     steps.append({"name": "memory", "minutes": STEP_MINUTES["memory"], "asks": memory[:2]})
     steps.append({"name": "warmup", "minutes": STEP_MINUTES["warmup"], "asks": warmup[:1]})
