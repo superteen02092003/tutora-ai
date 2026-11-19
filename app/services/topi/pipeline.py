@@ -43,7 +43,7 @@ async def run(client, req: TopiRunRequest, *, evidence_model: str, write_model: 
                                        last_homework=req.last_homework.quote if req.last_homework else None,
                                        raised=raised)
     if "tips" in req.outputs:
-        tasks["tips"] = tips_mod.write(client, model=write_model, evidence=ev, segments=segments)
+        tasks["tips"] = tips_mod.write(client, model=write_model, evidence=ev, segments=segments, grade=req.grade)
     results = await asyncio.gather(*tasks.values(), return_exceptions=True)
     for name, result in zip(tasks, results):
         if isinstance(result, Exception):
