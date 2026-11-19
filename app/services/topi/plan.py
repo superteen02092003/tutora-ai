@@ -7,6 +7,7 @@ import json
 from typing import Any, Optional
 
 from . import mathcheck, skill_map
+from .checker import homework_tasks_of
 from .llm import generate_json
 
 STEP_MINUTES = {"check": 3, "homework": 5, "memory": 3, "warmup": 4}
@@ -104,9 +105,11 @@ async def build(client, *, model: str, evidence: dict[str, Any], states: list[di
         steps.append({"name": "check", "minutes": STEP_MINUTES["check"], "asks": check[:2]})
     else:
         memory, warmup = [], []
-    hw = (evidence.get("homework_set") or {}).get("quote") or last_homework or ""
+    tasks = homework_tasks_of(evidence)
+    hw = "; ".join(t["quote"] for t in tasks) or last_homework or ""
+    pupil = "bé" if isinstance(grade, int) and grade <= 5 else "em"
     steps.append({"name": "homework", "minutes": STEP_MINUTES["homework"],
-                  "asks": [{"say": "Chữa những bài về nhà bé làm sai.", "problem": None, "answer": None,
+                  "asks": [{"say": f"Chữa những bài về nhà {pupil} làm sai.", "problem": None, "answer": None,
                             "verified": None, "homework_quote": hw}] if hw else []})
     steps.append({"name": "memory", "minutes": STEP_MINUTES["memory"], "asks": memory[:2]})
     steps.append({"name": "warmup", "minutes": STEP_MINUTES["warmup"], "asks": warmup[:1]})
