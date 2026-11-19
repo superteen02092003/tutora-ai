@@ -75,6 +75,43 @@ def check_labels(
     return kept, dropped, unknown
 
 
+def homework_tasks_of(evidence: dict[str, Any]) -> list[dict[str, Any]]:
+    """Danh sách bài về nhà; nhận cả dạng cũ `homework_set` (một câu) cho kết quả đã lưu."""
+    tasks = evidence.get("homework_tasks")
+    if isinstance(tasks, list):
+        return [t for t in tasks if isinstance(t, dict)]
+    hw = evidence.get("homework_set") or {}
+    if isinstance(hw, dict) and hw.get("quote"):
+        return [{"seg": hw.get("seg"), "quote": hw["quote"], "task": hw["quote"], "due": None}]
+    return []
+
+
+def check_homework(evidence: dict[str, Any], segments: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], list[dict[str, str]]]:
+    """Mỗi bài phải có câu giao bài nguyên văn của gia sư; hạn nộp phải nghe được ở đoạn đã nêu.
+
+    Hạn không chứng minh được thì bỏ hạn (giữ bài), để báo cáo không bịa hạn.
+    """
+    kept: list[dict[str, Any]] = []
+    dropped: list[dict[str, str]] = []
+    for i, t in enumerate(homework_tasks_of(evidence)):
+        ok, drop, _ = check_labels([t], segments, kind=f"homework_tasks[{i}]", expected_speaker="tutor")
+        dropped += drop
+        if not ok:
+            continue
+        task = dict(ok[0])
+        task["task"] = (task.get("task") or task["quote"]).strip()
+        due, due_quote, due_seg = task.get("due"), task.get("due_quote"), task.get("due_seg")
+        if due:
+            proof_seg = due_seg if isinstance(due_seg, int) else task["seg"]
+            proof = due_quote or due
+            if not (0 <= proof_seg < len(segments) and quote_in_segment(proof, segments[proof_seg].get("text", ""))):
+                dropped.append({"label": f"homework_tasks[{i}].due", "reason": "quote_not_in_segment"})
+                due, due_quote, due_seg = None, None, None
+        task["due"], task["due_quote"], task["due_seg"] = due, due_quote, due_seg
+        kept.append(task)
+    return kept, dropped
+
+
 def check_evidence(evidence: dict[str, Any], segments: list[dict[str, Any]]) -> dict[str, Any]:
     """Áp kiểm tra lên toàn bộ evidence; trả evidence đã lọc kèm khối `check`."""
     out = dict(evidence)
@@ -86,11 +123,12 @@ def check_evidence(evidence: dict[str, Any], segments: list[dict[str, Any]]) -> 
         dropped += drop
         kept_total += len(kept)
         unknown_total += unk
-    hw = evidence.get("homework_set") or {}
-    if hw.get("quote"):
-        kept, drop, _ = check_labels([hw], segments, kind="homework_set", expected_speaker="tutor")
-        out["homework_set"] = kept[0] if kept else {"seg": None, "quote": ""}
-        dropped += drop
+    tasks, drop = check_homework(evidence, segments)
+    out["homework_tasks"] = tasks
+    dropped += drop
+    # Trường cũ cho backend đang đọc homework_set (một câu): câu của bài đầu tiên.
+    out["homework_set"] = ({"seg": tasks[0]["seg"], "quote": tasks[0]["quote"]} if tasks
+                           else {"seg": None, "quote": ""})
     # Bài tập: chỉ cần khoảng đoạn hợp lệ.
     exercises = []
     for i, ex in enumerate(evidence.get("exercises") or []):
