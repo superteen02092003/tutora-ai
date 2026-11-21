@@ -1,5 +1,6 @@
 """Topi v1 — toàn pipeline với Gemini giả (không gọi mạng)."""
 import asyncio
+import json
 
 from app.models.topi import TopiRunRequest
 from app.services.topi import checker, pipeline, plan, report, tips
@@ -138,6 +139,78 @@ def test_rank_gaps_basics_first():
         {"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 2}]}
     rows = plan.rank_gaps(ev, [])
     assert rows[0]["node"] == "N7.03"
+
+
+# ---------- PLAN-FOCUS: trọng tâm phải là lỗ hổng có bằng chứng, không phải lỗi một lần
+WR = {"wrong": "-(a - b) = -a - b", "right": "-(a - b) = -a + b"}
+
+
+def test_single_self_fixed_error_is_watch_never_focus():
+    # L9 seg 68: bé lưỡng lự rồi tự sửa ngay — chỉ theo dõi, kể cả khi là dòng duy nhất.
+    ev = {"pupil_events": [
+        {"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 68, "exercise_id": "X1", **WR},
+        {"type": "self_correction", "seg": 68, "after": "none"}]}
+    rows = plan.rank_gaps(ev, [])
+    assert [(r["node"], r["role"], r["confidence"]) for r in rows] == [("N7.03", "watch", "low")]
+
+
+def test_unproven_medium_gap_is_not_focus():
+    # L3: một lần sai không tự sửa, nhưng không có cặp sai/đúng kiểm chứng -> không làm trọng tâm.
+    ev = {"pupil_events": [{"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 4, "exercise_id": "X1"}]}
+    rows = plan.rank_gaps(ev, [])
+    assert rows[0]["confidence"] == "medium" and rows[0]["role"] == "next"
+    assert not any(r["role"] == "focus" for r in rows)
+
+
+def test_proven_gap_beats_self_fixed_slip_regardless_of_node_order():
+    # Trước đây hoà điểm thì xếp theo mã nút: N6.05 đứng trước N7.03 dù chỉ là lỗi tự sửa.
+    ev = {"pupil_events": [
+        {"type": "error", "skill_node": "N6.05", "quote": "q", "seg": 1, "exercise_id": "X1", "error_type": "slip"},
+        {"type": "self_correction", "seg": 2, "after": "error_pointed"},
+        {"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 10, "exercise_id": "X2",
+         "error_type": "concept", **WR}]}
+    rows = {r["node"]: r for r in plan.rank_gaps(ev, [])}
+    assert rows["N7.03"]["role"] == "focus" and rows["N6.05"]["role"] == "watch"
+
+
+def test_errors_on_two_problems_are_high_and_focus_without_proof():
+    ev = {"pupil_events": [
+        {"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 1, "exercise_id": "X1"},
+        {"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 9, "exercise_id": "X2"}]}
+    row = plan.rank_gaps(ev, [])[0]
+    assert row["confidence"] == "high" and row["errors_now"] == 2 and row["role"] == "focus"
+
+
+def test_only_one_focus():
+    ev = {"pupil_events": [
+        {"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 1, "exercise_id": "X1", **WR},
+        {"type": "error", "skill_node": "N6.05", "quote": "q", "seg": 9, "exercise_id": "X2", **WR}]}
+    roles = [r["role"] for r in plan.rank_gaps(ev, [])]
+    assert roles.count("focus") == 1
+
+
+def test_no_focus_means_no_check_step(monkeypatch):
+    async def fake(client, *, feature, **_):
+        raise AssertionError("không có trọng tâm thì không gọi model soạn câu hỏi")
+    monkeypatch.setattr("app.services.topi.plan.generate_json", fake)
+    ev = {"pupil_events": [{"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 1},
+                           {"type": "self_correction", "seg": 1, "after": "none"}]}
+    out = asyncio.run(plan.build(None, model="m", evidence=ev, states=[], grade=8, last_homework=None))
+    assert "check" not in [s["name"] for s in out["steps"]]
+
+
+def test_plan_sees_every_exercise_not_only_first_eight(monkeypatch):
+    seen = {}
+
+    async def fake(client, *, feature, prompt, **_):
+        seen.update(json.loads(prompt))
+        return {"check": [], "memory": [], "warmup": []}
+    monkeypatch.setattr("app.services.topi.plan.generate_json", fake)
+    ex = [{"quote": f"bài {i}"} for i in range(21)] + [{"quote": "bài 0"}]
+    ev = {"exercises": ex, "pupil_events": [
+        {"type": "error", "skill_node": "N7.03", "quote": "q", "seg": 1, "exercise_id": "X1", **WR}]}
+    asyncio.run(plan.build(None, model="m", evidence=ev, states=[], grade=8, last_homework=None))
+    assert len(seen["lesson_tasks"]) == 21 and seen["lesson_tasks"][-1] == "bài 20"
 
 
 # ---------- HW-ONE: mọi bài về nhà và hạn nộp đều đến phụ huynh
